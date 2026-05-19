@@ -1,0 +1,51 @@
+% ============================================================================
+% TITLE PAGE
+% ============================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+
+\vspace*{30mm}
+
+% --- Title ---
+\begin{center}
+  {\fontsize{28}{34}\selectfont\bfseries\color{headerbar}%
+   Bildfilter in Python}\\[8pt]
+  {\fontsize{18}{22}\selectfont\color{headerbar}%
+   Projekt mit Stempel-Wanderung}
+\end{center}
+
+\vspace{10mm}
+
+% --- Horizontal rule ---
+\noindent\textcolor{headerbar}{\rule{\textwidth}{0.8pt}}
+
+\vspace{12mm}
+
+% --- Authors ---
+\noindent{\large\bfseries Lars Rafeldt}
+
+\vspace{6pt}
+
+\noindent{\itshape
+MNG, Mathematisch-Naturwissenschaftliches Gymnasium R\"amibuhl\\
+Fachschaft Informatik}
+
+\vspace{6pt}
+
+\noindent{\itshape E-mail:}
+{\color{maincolor}\href{mailto:lars.rafeldt@mng.ch}{lars.rafeldt@mng.ch}}
+
+\vspace{6pt}
+
+\noindent{\itshape Klasse 1f, Fr\"uhlingssemester 2026}
+
+\vfill
+
+% --- Bottom: logo spanning full page width, 5mm from page bottom ---
+\begin{tikzpicture}[remember picture, overlay]
+  \node[anchor=south, inner sep=0pt]
+    at ([yshift=5mm]current page.south)
+    {\includegraphics[width=\paperwidth]{../img/info_logo2}};
+\end{tikzpicture}
+
+\end{titlepage}

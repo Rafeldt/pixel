@@ -1,0 +1,43 @@
+# ----------------- Python -----------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.python-version
+
+# ----------------- Web app: secrets & runtime data ---------
+# NEVER commit these — they contain student PII or plaintext passwords.
+stempel-wanderung/data/
+stempel-wanderung/credentials.csv
+stempel-wanderung/login_cards.pdf
+.env
+
+# ----------------- Class roster (student PII) -------------
+Auswahl_Person*.csv
+roster*.csv
+
+# ----------------- LaTeX build artifacts ------------------
+# We keep skript.tex and skript.pdf in the repo. Everything else
+# xelatex/biblatex generates is transient.
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.run.xml
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*-blx.bib
+skript_tmp.*
+
+# ----------------- OS / Editor ----------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

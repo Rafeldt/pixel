@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Lehrperson — Stempel vergeben{% endblock %}
+{% block content %}
+
+<section class="card">
+  <h2>Stempel vergeben</h2>
+  <p class="hint">
+    Klick auf eine Zelle, um einer Person einen Stempel zu geben — oder
+    ihn wieder wegzunehmen. Die Änderung ist sofort sichtbar im
+    Stempelheft der Schülerin / des Schülers.
+  </p>
+
+  <div class="grid-scroll">
+    <table class="award-grid">
+      <thead>
+        <tr>
+          <th class="student-col">Name</th>
+          {% for stamp in stamps %}
+            <th class="stamp-col">
+              <div class="stamp-th-num">{{ stamp.station }}</div>
+              <div class="stamp-th-title">{{ stamp.title }}</div>
+            </th>
+          {% endfor %}
+          <th class="total-col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          {% set claimed = progress[s.username] %}
+          <tr id="student-{{ s.username }}">
+            <td class="student-col">{{ s.display_name }}</td>
+            {% for stamp in stamps %}
+              {% set is_claimed = stamp.id in claimed %}
+              <td class="cell">
+                <form method="post" action="{{ url_for('teacher_toggle') }}">
+                  <input type="hidden" name="username" value="{{ s.username }}">
+                  <input type="hidden" name="stamp_id" value="{{ stamp.id }}">
+                  <button type="submit"
+                          class="toggle {% if is_claimed %}on{% endif %}"
+                          title="{{ stamp.title }}{% if is_claimed %} (klick = entfernen){% else %} (klick = vergeben){% endif %}">
+                    {% if is_claimed %}✓{% else %}·{% endif %}
+                  </button>
+                </form>
+              </td>
+            {% endfor %}
+            <td class="total-col">{{ claimed|length }}/{{ stamps|length }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Stempel-Legende</h2>
+  <table class="codes-table">
+    <thead>
+      <tr>
+        <th style="width: 40px;">#</th>
+        <th>Stempel</th>
+        <th>Anforderung</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stamp in stamps %}
+        <tr>
+          <td>{{ stamp.station }}</td>
+          <td>
+            <strong>{{ stamp.title }}</strong><br>
+            <em style="color:#888; font-size:12px;">{{ stamp.chapter }}</em>
+          </td>
+          <td>{{ stamp.requirement }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% endblock %}

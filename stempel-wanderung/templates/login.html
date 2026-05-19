@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Anmelden — Stempel-Wanderung{% endblock %}
+{% block content %}
+<div class="login-wrapper card">
+  <h2>Stempelheft öffnen</h2>
+  <p>
+    Gib den Benutzernamen und das Passwort von deiner Login-Karte ein.
+  </p>
+  <form class="login-form" method="post" action="{{ url_for('login') }}">
+    <div>
+      <label for="username">Benutzername</label>
+      <input id="username" name="username" type="text" required
+             maxlength="40" autocomplete="username" autocapitalize="none"
+             autofocus>
+    </div>
+    <div>
+      <label for="password">Passwort</label>
+      <input id="password" name="password" type="password" required
+             autocomplete="current-password">
+    </div>
+    <button type="submit">Anmelden</button>
+  </form>
+</div>
+{% endblock %}

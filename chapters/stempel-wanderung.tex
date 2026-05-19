@@ -1,0 +1,159 @@
+% ============================================================================
+% CHAPTER 4: Stempel-Wanderung
+% ============================================================================
+\renewcommand{\chaptertag}{Bildfilter}
+\chapter{Stempel-Wanderung}
+
+% cinnabar color and \stempel command are defined in lernpfad.tex (loaded earlier).
+
+\vspace{-5pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{4pt}
+
+{\color{maincolor}\textbf{Worum es geht:}}
+\begin{itemize}[leftmargin=*]
+  \item Auf japanischen Wanderwegen gibt es an jeder Station einen Stempel,
+    den du in dein Heft dr\"uckst. Wer alle Stempel hat, hat den Berg geschafft.
+  \item Wir machen das mit Code: jede gemeisterte Station gibt
+    \textbf{einen Stempel}. Mit jedem Stempel wird ein Teil deines
+    \textit{paint-by-numbers}-Bildes sichtbar.
+  \item Es gibt insgesamt \textbf{10 Stationen}, vom ersten geladenen
+    Pixel bis zur fertigen Abgabe.
+\end{itemize}
+\vspace{-2pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{8pt}
+
+% ============================================================================
+\section{So funktioniert es}
+
+\begin{enumerate}
+  \item Zu Beginn des Projekts bekommst du eine \textbf{Login-Karte} mit
+    deinem Benutzernamen und einem Passwort.
+  \item Damit \"offnest du die Website \textit{Bildfilter Stempel-Wanderung}
+    im Browser und meldest dich an.
+  \item Wenn du eine Station geschafft hast, zeigst du dein Resultat der
+    Lehrperson.
+  \item Die Lehrperson setzt dir den Stempel direkt in dein Heft. Die
+    n\"achsten zwei Farben auf deinem Bild werden sofort sichtbar.
+\end{enumerate}
+
+\begin{definitionbox}{Login-Karte}
+Auf deiner Login-Karte stehen:
+\begin{itemize}
+  \item dein \textbf{Benutzername} (in der Regel dein Vorname, klein geschrieben),
+  \item dein \textbf{Passwort} (sechs Zeichen),
+  \item die \textbf{Adresse} der Website.
+\end{itemize}
+Bewahre die Karte gut auf. Wenn du sie verlierst, sag der Lehrperson Bescheid,
+dann gibt es ein neues Passwort.
+\end{definitionbox}
+
+% ============================================================================
+\section{Der Trail}
+
+\begin{center}
+\begin{tikzpicture}[
+  station/.style={
+    circle, draw=cinnabar, fill=cinnabar!8,
+    minimum size=10mm, font=\small\bfseries\color{cinnabar},
+    line width=0.9pt, inner sep=0pt,
+  },
+  trail/.style={cinnabar!55, line width=1.4pt, rounded corners=4pt},
+  caption/.style={font=\scriptsize, align=center, color=black!75, text width=24mm},
+]
+  % Row 1 (left to right)
+  \node[station] (s1) at (0, 0)  {1};
+  \node[station] (s2) at (3, 0)  {2};
+  \node[station] (s3) at (6, 0)  {3};
+  \node[station] (s4) at (9, 0)  {4};
+  % Row 2 (right to left)
+  \node[station] (s5) at (9, -2.5) {5};
+  \node[station] (s6) at (6, -2.5) {6};
+  \node[station] (s7) at (3, -2.5) {7};
+  % Row 3 (left to right)
+  \node[station] (s8) at (3, -5)   {8};
+  \node[station] (s9) at (6, -5)   {9};
+  \node[station] (s10) at (9, -5)  {10};
+
+  % Trail (winding)
+  \draw[trail] (s1) -- (s2) -- (s3) -- (s4)
+               -- (s5) -- (s6) -- (s7)
+               -- (s8) -- (s9) -- (s10);
+
+  % Captions
+  \node[caption] at (0, 0.85)   {Erstes\\Bild};
+  \node[caption] at (3, 0.85)   {Kein Rot};
+  \node[caption] at (6, 0.85)   {Spiegelwelt};
+  \node[caption] at (9, 0.85)   {Graustufen};
+  \node[caption] at (9, -1.65)  {Heller,\\dunkler};
+  \node[caption] at (6, -1.65)  {Schwarz-\\Weiss};
+  \node[caption] at (3, -1.65)  {Nachbarn\\mischen};
+  \node[caption] at (3, -4.15)  {Spiegelei};
+  \node[caption] at (6, -4.15)  {Eigener\\Filter};
+  \node[caption] at (9, -4.15)  {Auf dem\\Gipfel};
+
+  % Decorative summit marker after last station
+  \node[font=\Large\color{cinnabar}] at (10.4, -5) {$\blacktriangle$};
+\end{tikzpicture}
+\end{center}
+
+\vspace{6pt}
+
+% ============================================================================
+\section{Stationen im Detail}
+
+\renewcommand{\arraystretch}{1.2}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\bfseries\color{cinnabar}}c >{\bfseries}p{3.6cm} X p{1.8cm}}
+\toprule
+\tableheadercolor
+\# & Stempel & Anforderung & Lernpfad \\
+\midrule
+1  & Erstes Bild
+   & Bild mit \texttt{lade\_bild} in eine Liste laden, H\"ohe und Breite ausgeben.
+   & Schritt 0 \\
+2  & Kein Rot
+   & Rot-Wert aller Pixel auf $0$ setzen und speichern.
+   & Schritt 1 \\
+3  & Spiegelwelt
+   & \texttt{invertieren(bild)}: jeder Wert wird zu $255 -$ Wert.
+   & Schritt 1 \\
+4  & Graustufen
+   & \texttt{graustufen(bild)}: Mittelwert $\frac{R+G+B}{3}$.
+   & Schritt 2 \\
+5  & Heller, dunkler
+   & \texttt{helligkeit(bild, h)} mit Clamping auf $[0, 255]$.
+   & Schritt 2 \\
+6  & Schwarz-Weiss
+   & \texttt{schwellwert(bild, t)}: Pixel \"uber $t$ werden weiss.
+   & Schritt 3 \\
+7  & Nachbarn mischen
+   & \texttt{box\_blur(bild)}: $3\times 3$-Nachbarschaft mitteln.
+   & Schritt 4 \\
+8  & Spiegelei
+   & \texttt{spiegeln(bild)}: horizontal spiegeln.
+   & Schritt 5 \\
+9  & Eigener Filter
+   & Ein selbst erfundener Filter, der sichtbar funktioniert.
+   & Schritt 6 \\
+10 & Auf dem Gipfel
+   & Code, drei Vorher/Nachher-Bildpaare und Bericht (2 bis 3 A4-Seiten) abgegeben.
+   & Schritt 7 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================================
+\section{Das Bild}
+
+Dein Stempelheft zeigt eine \textit{paint-by-numbers}-Vorlage des Berges
+Fuji mit einer japanischen Pagode. Am Anfang ist nur die Vorlage mit den
+Zahlen zu sehen. Mit jedem Stempel wird ein St\"uck der Vorlage durch das
+\textit{fertige Bild} ersetzt, das, was du am Ende der Wanderung in
+voller Farbe siehst.
+
+Insgesamt ist das Bild in zehn Bereiche aufgeteilt, einer pro Stempel.
+
+\closechapter

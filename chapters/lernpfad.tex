@@ -1,0 +1,310 @@
+% ============================================================================
+% CHAPTER 3: Lernpfad
+% ============================================================================
+\renewcommand{\chaptertag}{Bildfilter}
+\chapter{Lernpfad}
+
+% --- Local color + stamp marker for this chapter and the next ---
+\definecolor{cinnabar}{RGB}{177, 56, 46}
+\newcommand{\stempel}[2]{%
+  \par\vspace{3pt}\noindent
+  \begin{tikzpicture}[baseline=-0.3em]
+    \node[fill=cinnabar, rounded corners=2pt,
+          inner xsep=5pt, inner ysep=2pt,
+          font=\scriptsize\bfseries\color{white}] {Stempel #1};
+  \end{tikzpicture}\,%
+  \textit{\color{cinnabar}#2}\par\vspace{2pt}%
+}
+
+\vspace{-5pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{4pt}
+
+{\color{maincolor}\textbf{Wegweiser:}}
+\begin{itemize}[leftmargin=*]
+  \item Jeder Schritt baut auf dem vorhergehenden auf.
+  \item Jeder Schritt enth\"alt: was du tun sollst, ein kleines Code-Beispiel
+    und welchen Stempel du dabei sammelst.
+  \item Wenn du eine Station geschafft hast, zeig der Lehrperson dein
+    Resultat, und sie setzt den Stempel direkt in dein Heft.
+\end{itemize}
+\vspace{-2pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{8pt}
+
+% ============================================================================
+\section{Schritt 0: Bild laden}
+
+Bevor du Filter schreiben kannst, musst du ein Bild laden. Setze die
+zwei Funktionen \texttt{lade\_bild} und \texttt{speichere\_bild} aus
+Kapitel~1 (Spielregeln) an den Anfang deiner Datei. Lade dann dein
+Probebild und gib Breite und H\"ohe aus:
+
+\begin{lstlisting}
+bild = lade_bild("foto.jpg")
+hoehe = len(bild)
+breite = len(bild[0])
+print("Hoehe:", hoehe, " Breite:", breite)
+\end{lstlisting}
+
+\stempel{1}{Erstes Bild}
+
+% ============================================================================
+\section{Schritt 1: Erste Pixel ver\"andern}
+
+Bevor wir richtige Filter schreiben, probieren wir aus, was passiert, wenn
+wir einzelne Farbkan\"ale ver\"andern.
+
+\subsection*{Aufw\"armer: Rot weg}
+
+Setze den Rot-Wert aller Pixel auf 0. Was passiert?
+
+\begin{lstlisting}[style=pseudo]
+Funktion kein_rot(bild):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile des Bildes:
+        Erstelle eine leere neue_zeile.
+        Fuer jeden Pixel (r, g, b) der Zeile:
+            Haenge (0, g, b) an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+\stempel{2}{Kein Rot}
+
+\subsection*{Filter 1: Invertieren}
+
+Beim Invertieren wird jeder Farbwert ``umgedreht'': aus 0 wird 255, aus 255
+wird 0, aus 100 wird 155.
+
+\begin{definitionbox}{Invertieren}
+F\"ur jeden Pixel $(R, G, B)$:
+\[ (R', G', B') = (255 - R,\; 255 - G,\; 255 - B) \]
+\end{definitionbox}
+
+\begin{lstlisting}[style=pseudo]
+Funktion invertieren(bild):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile des Bildes:
+        Erstelle eine leere neue_zeile.
+        Fuer jeden Pixel (r, g, b) der Zeile:
+            Haenge (255-r, 255-g, 255-b) an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+\stempel{3}{Spiegelwelt}
+
+% ============================================================================
+\section{Schritt 2: Punktoperationen}
+
+Filter, bei denen jeder neue Pixel nur vom \textit{gleichen} Pixel im
+Originalbild abh\"angt, heissen \term{Punktoperationen}.
+
+\subsection*{Filter 2: Graustufen}
+
+In einem Graustufenbild sind alle drei Farbkan\"ale gleich. Der einfachste
+Weg: den Durchschnitt der drei Werte nehmen.
+
+\begin{definitionbox}{Graustufen}
+F\"ur jeden Pixel $(R, G, B)$:
+\[ \text{grau} = \frac{R + G + B}{3}, \qquad
+   \text{neuer Pixel} = (\text{grau}, \text{grau}, \text{grau}) \]
+\end{definitionbox}
+
+\begin{lstlisting}[style=pseudo]
+Funktion graustufen(bild):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile des Bildes:
+        Erstelle eine leere neue_zeile.
+        Fuer jeden Pixel (r, g, b) der Zeile:
+            Setze grau = (r + g + b) ganzzahlig durch 3.
+            Haenge (grau, grau, grau) an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+\stempel{4}{Graustufen}
+
+\subsection*{Filter 3: Helligkeit}
+
+Um ein Bild heller zu machen, addieren wir auf jeden Farbwert eine Zahl
+$h$. Achtung: die Werte m\"ussen zwischen 0 und 255 bleiben! Daf\"ur
+schreiben wir eine kleine Hilfsfunktion \texttt{clamp}.
+
+\begin{lstlisting}[style=pseudo]
+Funktion clamp(wert):
+    Wenn wert kleiner als 0: gib 0 zurueck.
+    Wenn wert groesser als 255: gib 255 zurueck.
+    Sonst: gib wert zurueck.
+
+Funktion helligkeit(bild, h):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile des Bildes:
+        Erstelle eine leere neue_zeile.
+        Fuer jeden Pixel (r, g, b) der Zeile:
+            Haenge (clamp(r+h), clamp(g+h), clamp(b+h)) an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+\stempel{5}{Heller, dunkler}
+
+\begin{aufgabe}{Helligkeit von Hand}
+Was kommt heraus, wenn du auf einen Pixel $(200, 100, 50)$ die Helligkeit
+\begin{enumerate}
+  \item $h = 50$
+  \item $h = -150$
+  \item $h = 100$ (ohne Clamping)
+\end{enumerate}
+anwendest?
+\end{aufgabe}
+
+% ============================================================================
+\section{Schritt 3: Schwellwert}
+
+Beim Schwellwert wird jeder Pixel \textit{entweder} ganz schwarz \textit{oder}
+ganz weiss, je nachdem, ob seine Helligkeit \"uber oder unter einem
+Schwellwert $t$ liegt.
+
+\begin{definitionbox}{Schwellwert}
+F\"ur jeden Pixel berechne zuerst den Grauwert $g$. Dann:
+\[ \text{neuer Pixel} = \begin{cases}
+   (255, 255, 255) & \text{falls } g \geq t \\
+   (0, 0, 0) & \text{sonst}
+\end{cases} \]
+\end{definitionbox}
+
+\begin{lstlisting}[style=pseudo]
+Funktion schwellwert(bild, t):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile des Bildes:
+        Erstelle eine leere neue_zeile.
+        Fuer jeden Pixel (r, g, b) der Zeile:
+            Setze grau = (r + g + b) ganzzahlig durch 3.
+            Wenn grau groesser oder gleich t:
+                Haenge (255, 255, 255) an neue_zeile an.
+            Sonst:
+                Haenge (0, 0, 0) an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+\stempel{6}{Schwarz-Weiss}
+
+% ============================================================================
+\section{Schritt 4: Nachbarpixel und Box-Blur}
+
+Die bisherigen Filter haben jeden Pixel \textit{einzeln} bearbeitet.
+Spannender wird es, wenn wir auch die \term{Nachbarpixel} mitnehmen.
+
+\begin{definitionbox}{Box-Blur ($3\times 3$)}
+F\"ur jeden Pixel: schau dir den Pixel selbst und seine 8 direkten Nachbarn
+an (das $3\times 3$-Fenster). Berechne pro Farbkanal den \textbf{Durchschnitt}
+aller 9 Werte. Das ist dein neuer Pixel.
+
+\begin{center}
+\begin{tikzpicture}[
+  cell/.style={minimum width=10mm, minimum height=10mm, draw=maincolor!50,
+    fill=maincolorvlight, font=\scriptsize},
+  center/.style={cell, fill=maincolorlight, font=\scriptsize\bfseries},
+]
+  \node[cell] at (0, 1) {NW};
+  \node[cell] at (1.2, 1) {N};
+  \node[cell] at (2.4, 1) {NO};
+  \node[cell] at (0, 0) {W};
+  \node[center] at (1.2, 0) {Pixel};
+  \node[cell] at (2.4, 0) {O};
+  \node[cell] at (0, -1) {SW};
+  \node[cell] at (1.2, -1) {S};
+  \node[cell] at (2.4, -1) {SO};
+\end{tikzpicture}
+\end{center}
+\end{definitionbox}
+
+\begin{lstlisting}[style=pseudo]
+Funktion box_blur(bild):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile von 1 bis hoehe-2:
+        Erstelle eine leere neue_zeile.
+        Fuer jede Spalte von 1 bis breite-2:
+            Setze summe_r, summe_g, summe_b auf 0.
+            Fuer dz in {-1, 0, 1}:
+                Fuer ds in {-1, 0, 1}:
+                    Lies Pixel (r, g, b) an (zeile+dz, spalte+ds).
+                    summe_r = summe_r + r
+                    summe_g = summe_g + g
+                    summe_b = summe_b + b
+            Haenge (summe_r//9, summe_g//9, summe_b//9) an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+Beachte: wir beginnen bei Zeile/Spalte~1 und h\"oren eine Zeile/Spalte vor
+dem Ende auf. So haben wir immer ein vollst\"andiges $3\times 3$-Fenster.
+Die \"aussersten Pixel fallen dabei weg. Das ist eine bewusste Entscheidung
+und f\"ur unsere Zwecke v\"ollig in Ordnung.
+
+\stempel{7}{Nachbarn mischen}
+
+\begin{aufgabe}{Mehrfach blurren}
+Was passiert, wenn du den Box-Blur \textit{mehrfach hintereinander} auf
+dasselbe Bild anwendest? Probiere 1$\times$, 5$\times$ und 20$\times$ aus.
+\end{aufgabe}
+
+% ============================================================================
+\section{Schritt 5: Bild umordnen, Spiegeln}
+
+Bisher haben wir Pixel \textit{ver\"andert}. Jetzt ordnen wir sie um. Beim
+horizontalen Spiegeln tauschen wir die linke und die rechte Seite.
+
+\begin{lstlisting}[style=pseudo]
+Funktion spiegeln(bild):
+    Erstelle ein leeres neues_bild.
+    Fuer jede Zeile des Bildes:
+        Erstelle eine leere neue_zeile.
+        Fuer jede Spalte von 0 bis breite-1:
+            Haenge bild[zeile][breite-1-spalte] an neue_zeile an.
+        Haenge neue_zeile an neues_bild an.
+    Gib neues_bild zurueck.
+\end{lstlisting}
+
+\stempel{8}{Spiegelei}
+
+% ============================================================================
+\section{Schritt 6: Dein eigener Filter}
+
+Jetzt bist du dran! Erfinde \textit{einen} eigenen Filter. Hier ein paar
+Ideen (du darfst auch etwas ganz Eigenes machen):
+
+\begin{itemize}
+  \item \textbf{Vertikal spiegeln:} obere und untere H\"alfte tauschen.
+  \item \textbf{Posterisierung:} runde jeden Kanal auf Vielfache von 64
+    (Werte werden dann nur noch 0, 64, 128, 192).
+  \item \textbf{Verpixelung:} ersetze jeden $k \times k$-Block durch
+    die Durchschnittsfarbe dieses Blocks.
+  \item \textbf{Einfache Kantenerkennung:} f\"ur jeden Pixel den Unterschied
+    zum rechten Nachbarn berechnen.
+  \item \textbf{Nur ein Kanal:} alle Farben ausser Rot, Gr\"un oder Blau
+    auf 0 setzen.
+\end{itemize}
+
+\stempel{9}{Eigener Filter}
+
+% ============================================================================
+\section{Schritt 7: Abgabe}
+
+Bereite die Abgabe vor:
+
+\begin{enumerate}
+  \item Pr\"ufe, dass alle Pflichtfilter laufen.
+  \item Suche drei Originalbilder aus und wende je einen Filter darauf an.
+    Das ergibt drei \textit{Vorher/Nachher}-Paare.
+  \item Schreibe einen Bericht von 2 bis 3 A4-Seiten. Was
+    war einfach? Was war schwierig? Welcher Filter hat dich \"uberrascht?
+  \item Gib Code, Bilder und Bericht ab.
+\end{enumerate}
+
+\stempel{10}{Auf dem Gipfel}
+
+\closechapter

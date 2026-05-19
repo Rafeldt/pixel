@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Lehrperson — Login{% endblock %}
+{% block content %}
+<div class="login-wrapper card">
+  <h2>Lehrperson-Bereich</h2>
+  <p>Passwort eingeben, um Fortschritte und Stempel-Codes zu sehen.</p>
+  <form class="login-form" method="post" action="{{ url_for('teacher') }}">
+    <div>
+      <label for="password">Passwort</label>
+      <input id="password" name="password" type="password" required autofocus>
+    </div>
+    <button type="submit">Einloggen</button>
+  </form>
+</div>
+{% endblock %}

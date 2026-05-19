@@ -1,0 +1,182 @@
+% ============================================================================
+% CHAPTER 2: Bewertungskatalog
+% ============================================================================
+\renewcommand{\chaptertag}{Bildfilter}
+\chapter{Bewertungskatalog}
+
+\vspace{-5pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{4pt}
+
+{\color{maincolor}\textbf{\"Uberblick:}}
+\begin{itemize}[leftmargin=*]
+  \item Du kannst insgesamt \textbf{100 Punkte} erreichen, verteilt
+    auf vier Bereiche.
+  \item Den gr\"ossten Teil holst du dir mit den \textbf{Pflichtfiltern}.
+    Daneben z\"ahlen dein \textbf{eigener Filter}, deine
+    \textbf{Codequalit\"at} und eine ordentliche \textbf{Abgabe}.
+  \item Die folgende Grafik zeigt, wieviele Punkte in jedem Bereich zu
+    holen sind.
+\end{itemize}
+
+\vspace{8pt}
+
+\begin{center}
+\begin{tikzpicture}
+  \def\W{15}     % Gesamtbreite in cm (entspricht textwidth)
+  \def\hgt{1.4}  % Hoehe in cm
+  % Hintergrundfarben (von dunkel nach hell, gewichtet nach Punktezahl)
+  \fill[maincolor]    (0,0)            rectangle (\W*0.50, \hgt);
+  \fill[maincolor!72] (\W*0.50, 0)     rectangle (\W*0.70, \hgt);
+  \fill[maincolor!50] (\W*0.70, 0)     rectangle (\W*0.85, \hgt);
+  \fill[maincolor!32] (\W*0.85, 0)     rectangle (\W,      \hgt);
+  % Beschriftungen
+  \node[white, font=\bfseries]            at (\W*0.25,\hgt*0.65) {A. Pflichtfilter};
+  \node[white, font=\footnotesize]        at (\W*0.25,\hgt*0.32) {50 Punkte};
+  \node[white, font=\bfseries\small]      at (\W*0.60,\hgt*0.65) {B. Eigen};
+  \node[white, font=\scriptsize]          at (\W*0.60,\hgt*0.32) {20 Pkt.};
+  \node[white, font=\bfseries\scriptsize] at (\W*0.775,\hgt*0.65) {C. Code};
+  \node[white, font=\tiny]                at (\W*0.775,\hgt*0.32) {15 Pkt.};
+  \node[white, font=\bfseries\scriptsize] at (\W*0.925,\hgt*0.65) {D. Abgabe};
+  \node[white, font=\tiny]                at (\W*0.925,\hgt*0.32) {15 Pkt.};
+\end{tikzpicture}
+\end{center}
+
+\vspace{4pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{8pt}
+
+\renewcommand{\arraystretch}{1.25}
+
+% ============================================================================
+\section{A. Pflichtfilter (50 Punkte)}
+
+F\"ur jeden dieser Filter gibt es Punkte, wenn er korrekt funktioniert und
+ein sichtbares Ergebnis liefert. Jeder Filter ist eine eigene Funktion.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{4cm} X r}
+\toprule
+\tableheadercolor
+Filter & Was er tut & Pkt. \\
+\midrule
+Kein Rot
+  & Setzt den Rot-Wert aller Pixel auf 0.
+  & 5 \\
+\midrule
+Invertieren
+  & Aus jedem Wert wird $255 - $ Wert.
+  & 7 \\
+\midrule
+Graustufen
+  & Pro Pixel: \texttt{grau = (R + G + B) // 3}, neuer Pixel
+    $(\text{grau}, \text{grau}, \text{grau})$.
+  & 7 \\
+\midrule
+Helligkeit
+  & Addiert eine Zahl $h$ auf jeden Farbkanal, klemmt die Werte
+    auf $[0, 255]$.
+  & 8 \\
+\midrule
+Schwellwert
+  & Pixel \"uber einem Schwellwert $t$ werden weiss, alle anderen
+    schwarz.
+  & 7 \\
+\midrule
+Box-Blur
+  & Pro Pixel: Durchschnitt aus dem Pixel selbst und seinen 8 Nachbarn
+    ($3\times 3$-Fenster).
+  & 10 \\
+\midrule
+Spiegeln
+  & Spiegelt das Bild horizontal (linke und rechte Seite tauschen).
+  & 6 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================================
+\section{B. Eigener Filter (20 Punkte)}
+
+Erfinde und implementiere einen \textit{eigenen} Filter, oder w\"ahle
+einen aus den Vorschl\"agen am Ende des Lernpfads.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{4cm} X r}
+\toprule
+\tableheadercolor
+Kriterium & Anforderung & Pkt. \\
+\midrule
+Funktion arbeitet korrekt
+  & Der Filter produziert sichtbar das, was er soll.
+  & 10 \\
+\midrule
+Eigenst\"andige Idee
+  & Du kannst in zwei S\"atzen erkl\"aren, was dein Filter tut und warum.
+  & 5 \\
+\midrule
+Beispielbild
+  & Du zeigst ein Vorher/Nachher-Bild, auf dem der Effekt klar zu sehen ist.
+  & 5 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================================
+\section{C. Codequalit\"at (15 Punkte)}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{4cm} X r}
+\toprule
+\tableheadercolor
+Kriterium & Anforderung & Pkt. \\
+\midrule
+Aussagekr\"aftige Namen
+  & Variablen heissen wie das, was sie sind:
+    \texttt{zeile}, \texttt{spalte}, \texttt{neuer\_pixel}, nicht
+    \texttt{a}, \texttt{b}, \texttt{tmp}.
+  & 5 \\
+\midrule
+Eine Funktion pro Filter
+  & Jeder Filter ist eine eigene Funktion, nicht alles in einem grossen
+    Block.
+  & 5 \\
+\midrule
+Clamping korrekt
+  & Bei \texttt{helligkeit} bleiben die Werte zwischen 0 und 255.
+  & 3 \\
+\midrule
+Rand bewusst behandelt
+  & Beim Box-Blur weisst du, was du am Bildrand machst (z.B.\ einfach
+    weglassen).
+  & 2 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================================
+\section{D. Abgabe (15 Punkte)}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{4cm} X r}
+\toprule
+\tableheadercolor
+Kriterium & Anforderung & Pkt. \\
+\midrule
+Code abgegeben
+  & Alle Python-Dateien sind l\"auffahig und an die richtige Stelle hochgeladen.
+  & 5 \\
+\midrule
+Drei Beispielbild-Paare
+  & Drei Original/Filter-Paare als Bilddateien.
+  & 5 \\
+\midrule
+Bericht
+  & 2 bis 3 A4-Seiten: Was hast du gemacht? Was war schwierig?
+    Was hat dich \"uberrascht?
+  & 5 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\closechapter

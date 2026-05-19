@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Stempelheft — {{ display_name }}{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+
+  <section class="card">
+    <h2>Dein Berg</h2>
+    <p class="hint">
+      Sobald die Lehrperson dir einen neuen Stempel gibt, erscheinen hier
+      zwei zusätzliche Farben.
+    </p>
+    <div class="fuji-frame">
+      <svg class="fuji-svg" viewBox="0 0 1404 993"
+           xmlns="http://www.w3.org/2000/svg"
+           preserveAspectRatio="xMidYMid meet">
+
+        <image href="{{ url_for('static', filename='canvas.png') }}"
+               x="0" y="0" width="1404" height="993"
+               preserveAspectRatio="none"/>
+
+        {% for stamp in stamps %}
+          {% if stamp.id in claimed_set %}
+            {% for cid in stamp.color_ids %}
+              <image href="{{ url_for('static', filename='reveal_%02d.png' % cid) }}"
+                     x="0" y="0" width="1404" height="993"
+                     preserveAspectRatio="none"/>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </svg>
+    </div>
+    <p class="progress-text">
+      <strong>{{ claimed_ids|length }}</strong> von {{ stamps|length }}
+      Stempeln gesammelt
+    </p>
+  </section>
+
+  <section class="card full-width">
+    <h2>Stempelheft</h2>
+    <p class="hint">
+      Die {{ stamps|length }} Stationen führen dich vom ersten Bildladen
+      bis zur fertigen Abgabe. Jede Station füllt zwei Farben auf
+      deinem Bild aus.
+    </p>
+    <div class="stamp-grid">
+      {% for stamp in stamps %}
+        <div class="stamp {% if stamp.id in claimed_set %}claimed{% endif %}">
+          <span class="station-num">Station {{ stamp.station }}</span>
+          <div class="stamp-title">{{ stamp.title }}</div>
+          <div class="stamp-subtitle">{{ stamp.subtitle }}</div>
+          <div class="stamp-req">{{ stamp.requirement }}</div>
+          <div class="stamp-chapter">{{ stamp.chapter }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

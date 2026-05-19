@@ -1,0 +1,135 @@
+% ============================================================================
+% CHAPTER 1: Projektbeschreibung
+% ============================================================================
+\renewcommand{\chaptertag}{Bildfilter}
+\chapter{Projektbeschreibung}
+
+\vspace{-5pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{4pt}
+
+{\color{maincolor}\textbf{Lernziele:}}
+\begin{itemize}[leftmargin=*]
+  \item Du verstehst, wie ein Computer ein Bild speichert.
+  \item Du kannst eigene Bildfilter als Python-Funktionen schreiben und an
+    echten Fotos ausprobieren.
+  \item Du gehst Schritt f\"ur Schritt von einfachen Pixel-\"Anderungen
+    bis zu Filtern, die mehrere Nachbarpixel zusammenrechnen.
+\end{itemize}
+\vspace{-2pt}
+{\color{maincolor}\rule{\textwidth}{0.4pt}}
+\vspace{8pt}
+
+Jedes Mal, wenn du auf Instagram einen Filter anwendest oder in der
+Galerie-App ein Foto heller machst, l\"auft im Hintergrund ein
+Bildbearbeitungs-Algorithmus. In diesem Projekt programmierst du solche
+Filter selbst und siehst sofort, was dein Code mit echten Bildern macht.
+
+% ============================================================================
+\section{So funktioniert das Projekt}
+
+\begin{enumerate}
+  \item Du arbeitest an deinem eigenen Python-Programm. Du schreibst Filter
+    als Funktionen.
+  \item Auf einer Website f\"uhrst du ein \textit{Stempelheft}. F\"ur jede
+    Aufgabe, die du schaffst, bekommst du einen Stempel.
+  \item Mit jedem Stempel wird ein St\"uck eines paint-by-numbers-Bildes auf
+    deinem Heft sichtbar. Wer alle Stempel hat, sieht das fertige Bild.
+\end{enumerate}
+
+\begin{definitionbox}{Bildfilter}
+Ein \term{Bildfilter} ist ein Algorithmus, der ein Bild als Eingabe nimmt
+und ein neues Bild zur\"uckgibt. Dabei wird jeder Pixel nach einer
+bestimmten Regel ver\"andert.
+\end{definitionbox}
+
+% ============================================================================
+\section{Spielregeln}
+
+\begin{itemize}
+  \item Du arbeitest mit \textbf{verschachtelten Listen}, wie du sie aus
+    dem Algorithmen-Skript kennst:
+\begin{lstlisting}
+bild[zeile][spalte]  # liefert einen Pixel (R, G, B)
+\end{lstlisting}
+  \item Zum Laden und Speichern von Bilddateien verwendest du die
+    Bibliothek \texttt{Pillow}. Setze die folgenden zwei Funktionen
+    einmal an den Anfang deiner Datei. Sie laden ein Bild aus dem
+    aktuellen Ordner in eine verschachtelte Liste und speichern eine
+    verschachtelte Liste wieder als Bild:
+\begin{lstlisting}
+from PIL import Image
+
+def lade_bild(pfad):
+    img = Image.open(pfad).convert("RGB")
+    breite, hoehe = img.size
+    bild = []
+    for y in range(hoehe):
+        zeile = []
+        for x in range(breite):
+            zeile.append(img.getpixel((x, y)))
+        bild.append(zeile)
+    return bild
+
+def speichere_bild(bild, pfad):
+    hoehe = len(bild)
+    breite = len(bild[0])
+    img = Image.new("RGB", (breite, hoehe))
+    for y in range(hoehe):
+        for x in range(breite):
+            img.putpixel((x, y), bild[y][x])
+    img.save(pfad)
+\end{lstlisting}
+    Aufrufen kannst du sie so:
+\begin{lstlisting}
+bild = lade_bild("foto.jpg")
+speichere_bild(bild, "ergebnis.png")
+\end{lstlisting}
+  \item Alles andere (jede Filterlogik) schreibst du selbst.
+\end{itemize}
+
+\begin{beispiel}{Was ist ein Pixel?}
+Ein Pixel wird in Python als Tupel aus drei Zahlen gespeichert, jeweils
+zwischen 0 und 255:
+
+\begin{lstlisting}
+schwarz = (0, 0, 0)
+weiss   = (255, 255, 255)
+rot     = (255, 0, 0)
+gruen   = (0, 255, 0)
+blau    = (0, 0, 255)
+gelb    = (255, 255, 0)   # Rot + Gruen
+violett = (128, 0, 128)
+\end{lstlisting}
+
+Auf einen einzelnen Pixel greifst du so zu:
+\begin{lstlisting}
+pixel = bild[10][20]   # Pixel in Zeile 10, Spalte 20
+r, g, b = pixel        # in seine drei Werte zerlegen
+\end{lstlisting}
+\end{beispiel}
+
+% ============================================================================
+\section{Abgabe}
+
+Du gibst am Ende drei Sachen ab:
+
+\begin{enumerate}
+  \item Deine \textbf{Python-Datei(en)} mit allen Filtern.
+  \item Drei \textbf{Vorher/Nachher-Bildpaare}: ein Originalfoto und
+    daneben jeweils das Ergebnis eines deiner Filter.
+  \item Einen \textbf{Bericht} (2 bis 3 A4-Seiten): Was hast du
+    gemacht? Welcher Filter hat dich \"uberrascht? Wo bist du steckengeblieben?
+\end{enumerate}
+
+Die Abgabe l\"auft \"uber die normale Plattform der Klasse. Wie genau,
+besprechen wir gemeinsam.
+
+% ============================================================================
+\section{Zeitrahmen}
+
+Das Projekt l\"auft \"uber rund sieben Doppellektionen. Das n\"achste
+Kapitel zeigt dir, wie bewertet wird; danach folgt der \textit{Lernpfad}
+mit den eigentlichen Aufgaben.
+
+\closechapter

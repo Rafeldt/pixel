@@ -1,0 +1,87 @@
+% ============================================================================
+% BILDFILTER-PROJEKT (1f) - Main Document
+% Compile with: xelatex skript.tex (run twice for correct overlays)
+% ============================================================================
+\documentclass[11pt, a4paper, twoside, openright]{book}
+
+% --- Shared preamble modules ---
+\input{../preamble/packages}
+\input{../preamble/colors}
+\input{../preamble/commands}
+\input{../preamble/environments}
+\input{../preamble/layout}
+
+% --- Python code listings (matches 1f_FS26_algorithmen style) ---
+\usepackage{listings}
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries\color{maincolor},
+  commentstyle=\itshape\color{maincolor!50!black},
+  stringstyle=\color{headerbar},
+  numbers=none,
+  backgroundcolor=\color{boxbody},
+  frame=single,
+  rulecolor=\color{maincolor!30},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  showstringspaces=false,
+  aboveskip=8pt,
+  belowskip=8pt,
+  xleftmargin=4pt,
+  framexleftmargin=4pt,
+}
+\lstset{style=python}
+
+% --- Pseudocode style: visibly different from Python so students translate
+%     rather than copy. Sans-serif, cinnabar accent, no Python keywords. ---
+\definecolor{pseudocinnabar}{RGB}{177, 56, 46}
+\lstdefinestyle{pseudo}{
+  language=,
+  basicstyle=\sffamily\small,
+  keywordstyle=\bfseries\color{pseudocinnabar},
+  morekeywords={Funktion, fuer, Fuer, FUER, jede, jeden, jedes, des, der,
+                von, bis, in, an, gib, zurueck, wenn, dann, sonst, und, oder,
+                nicht, ist, gleich, kleiner, groesser, leere, Liste, Setze,
+                erstelle, lies, schreibe, fuege, hinzu, anhaengen, hange},
+  numbers=none,
+  backgroundcolor=\color{pseudocinnabar!4},
+  frame=single,
+  rulecolor=\color{pseudocinnabar!40},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  showstringspaces=false,
+  aboveskip=8pt,
+  belowskip=8pt,
+  xleftmargin=4pt,
+  framexleftmargin=4pt,
+}
+
+% --- Script-specific bibliography ---
+\addbibresource{references.bib}
+
+% ============================================================================
+% DOCUMENT
+% ============================================================================
+\begin{document}
+
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside\ifodd\c@page\else
+  \thispagestyle{empty}\hbox{}\newpage
+  \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+
+\input{chapters/titlepage}
+\thispagestyle{empty}
+\null\newpage
+
+\setcounter{page}{1}
+
+\input{chapters/projektbeschreibung}
+\input{chapters/bewertungskatalog}
+\input{chapters/lernpfad}
+\input{chapters/stempel-wanderung}
+
+\end{document}

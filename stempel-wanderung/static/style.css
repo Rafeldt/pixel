@@ -1,0 +1,399 @@
+/* ============================================================
+   Bildfilter Stempel-Wanderung - styles
+   Aesthetic: Japanese paper (washi) + cinnabar ink + MNG blue
+   ============================================================ */
+
+:root {
+  --mng-blue:        #0076BD;
+  --mng-blue-dark:   #003C64;
+  --mng-blue-light:  #99C8E5;
+  --paper:           #FAF6EE;
+  --paper-dark:      #EFE9DC;
+  --ink:             #2A2118;
+  --ink-soft:        #6B5F4F;
+  --cinnabar:        #B1382E;
+  --cinnabar-soft:   rgba(177, 56, 46, 0.08);
+  --success:         #2E7D4F;
+  --info:            #4A6FA5;
+  --error:           #B1382E;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================ Header */
+.site-header {
+  background: linear-gradient(90deg, var(--mng-blue-dark), var(--mng-blue));
+  color: white;
+  padding: 14px 0;
+  border-bottom: 3px solid var(--cinnabar);
+}
+.site-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.site-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.site-header h1 a { color: white; text-decoration: none; }
+.site-header nav { display: flex; align-items: center; gap: 16px; }
+.site-header nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 3px;
+  transition: background 200ms;
+}
+.site-header nav a:hover { background: rgba(255,255,255,0.15); }
+.site-header .username {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+main.container { padding-top: 28px; padding-bottom: 60px; }
+
+/* ============================================================ Flash messages */
+.flash {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 4px solid;
+  font-size: 14px;
+}
+.flash.success { background: rgba(46, 125, 79, 0.08); border-color: var(--success); }
+.flash.info    { background: rgba(74, 111, 165, 0.08); border-color: var(--info); }
+.flash.error   { background: var(--cinnabar-soft); border-color: var(--error); color: var(--cinnabar); }
+
+/* ============================================================ Cards */
+.card {
+  background: white;
+  border: 1px solid var(--paper-dark);
+  border-radius: 6px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.card h2 {
+  margin: 0 0 12px 0;
+  color: var(--mng-blue-dark);
+  font-size: 20px;
+}
+.card .hint {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin: 0 0 16px 0;
+}
+
+/* ============================================================ Login */
+.login-wrapper {
+  max-width: 440px;
+  margin: 60px auto;
+}
+.login-wrapper p { color: var(--ink-soft); }
+.login-form { display: grid; gap: 14px; }
+.login-form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.login-form input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid var(--paper-dark);
+  border-radius: 4px;
+  background: var(--paper);
+  font-family: inherit;
+}
+.login-form input:focus {
+  outline: none;
+  border-color: var(--mng-blue);
+  background: white;
+}
+.login-form button, .btn-primary {
+  background: var(--mng-blue);
+  color: white;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 150ms;
+  font-family: inherit;
+}
+.login-form button:hover, .btn-primary:hover { background: var(--mng-blue-dark); }
+
+/* ============================================================ Dashboard layout */
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+}
+@media (max-width: 900px) {
+  .dashboard { grid-template-columns: 1fr; }
+}
+.dashboard .full-width { grid-column: 1 / -1; }
+
+/* ============================================================ Fuji SVG */
+.fuji-frame {
+  background: var(--paper);
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--paper-dark);
+}
+.fuji-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: white;
+}
+.fuji-svg .zone-badge { pointer-events: none; }
+.progress-text {
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 12px 0 0;
+}
+.progress-text strong { color: var(--cinnabar); font-size: 16px; }
+
+/* ============================================================ Claim form */
+.claim-form {
+  display: flex;
+  gap: 10px;
+}
+.claim-form input {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--paper-dark);
+  border-radius: 4px;
+  background: var(--paper);
+  font-family: inherit;
+  letter-spacing: 1px;
+}
+.claim-form input:focus { outline: none; border-color: var(--cinnabar); }
+.claim-form button {
+  background: var(--cinnabar);
+  color: white;
+  padding: 10px 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.claim-form button:hover { background: #8E2C25; }
+
+/* ============================================================ Stamp grid */
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.stamp {
+  border: 1.5px dashed #BBB1A0;
+  border-radius: 4px;
+  padding: 14px;
+  background: var(--paper);
+  position: relative;
+  min-height: 130px;
+  transition: all 250ms;
+}
+.stamp.claimed {
+  border: 2px solid var(--cinnabar);
+  background: var(--cinnabar-soft);
+  box-shadow: 2px 2px 0 rgba(177, 56, 46, 0.15);
+}
+.stamp.claimed::after {
+  /* Faux hanko (Japanese seal) badge in the corner */
+  content: "✓";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: var(--cinnabar);
+  color: white;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  transform: rotate(8deg);
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+}
+.stamp .station-num {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  background: var(--paper-dark);
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+.stamp.claimed .station-num {
+  background: var(--cinnabar);
+  color: white;
+}
+.stamp .stamp-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 2px 0;
+}
+.stamp .stamp-subtitle {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 0 0 8px 0;
+}
+.stamp .stamp-req {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.stamp .stamp-chapter {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================ Teacher view */
+.grid-scroll { overflow-x: auto; }
+table.award-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.award-grid th, table.award-grid td {
+  padding: 4px 6px;
+  text-align: center;
+  border-bottom: 1px solid var(--paper-dark);
+}
+table.award-grid th {
+  background: var(--paper-dark);
+  font-weight: 700;
+  color: var(--ink);
+  vertical-align: bottom;
+}
+table.award-grid th.stamp-col {
+  min-width: 60px;
+  padding: 6px 4px 8px;
+}
+.stamp-th-num {
+  display: inline-block;
+  background: var(--cinnabar);
+  color: white;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 50%;
+  margin-bottom: 4px;
+}
+.stamp-th-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  line-height: 1.2;
+}
+table.award-grid th.student-col,
+table.award-grid td.student-col {
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+  padding-left: 8px;
+  padding-right: 12px;
+}
+table.award-grid td.total-col {
+  font-weight: 700;
+  color: var(--cinnabar);
+  padding-left: 12px;
+}
+table.award-grid tbody tr:hover {
+  background: rgba(177, 56, 46, 0.04);
+}
+table.award-grid td.cell { padding: 2px; }
+table.award-grid td.cell form { margin: 0; display: block; }
+button.toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  border: 1.5px dashed #BBB1A0;
+  background: var(--paper);
+  color: #9CA3AF;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 100ms, box-shadow 150ms, background 150ms;
+  font-family: inherit;
+  display: block;
+  margin: 0 auto;
+}
+button.toggle:hover {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+  background: rgba(177, 56, 46, 0.06);
+}
+button.toggle.on {
+  border: 2px solid var(--cinnabar);
+  border-style: solid;
+  background: var(--cinnabar);
+  color: white;
+  box-shadow: 1px 1px 0 rgba(177, 56, 46, 0.2);
+}
+button.toggle.on:hover {
+  background: #8E2C25;
+  border-color: #8E2C25;
+}
+button.toggle:active { transform: translateY(1px); }
+table.codes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+table.codes-table th, table.codes-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--paper-dark);
+}
+table.codes-table th { background: var(--paper-dark); }
+table.codes-table code {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+}
