@@ -1,13 +1,19 @@
 """Stamp definitions for the Bildfilter Stempel-Wanderung (Klasse 1f).
 
 The order of STAMPS is the order students collect them.
-Each stamp owns two color indices in `color_ids`. Those color indices
+Each stamp owns one or two color indices in `color_ids`. Those indices
 match the reveal_NN.png masks produced by generate_reveal_masks.py.
 
-The assignment below pairs each big colour with a small one so each
-stamp adds roughly similar visible area. Re-run generate_reveal_masks.py
-if the design image changes, then adjust color_ids if a new colour
-order falls out of the quantiser.
+The current assignment was tuned to the output of generate_reveal_masks
+on the current design-preview.jpg + canvas.png:
+  - Early stamps (1-6) reveal a single small-to-medium colour.
+  - Later stamps (7-10) reveal two colours each, ending with the
+    biggest reveal at "Auf dem Gipfel".
+Six palette indices (3, 8, 9, 12, 16, 19) have no canvas regions
+under the current image pair, so they aren't referenced by any stamp.
+
+If the design or canvas image changes, re-run the generator and
+re-tune these pairings.
 """
 
 STAMPS = [
@@ -22,7 +28,7 @@ STAMPS = [
         ),
         "code": "px100",
         "chapter": "Schritt 0",
-        "color_ids": [16, 8],
+        "color_ids": [14],
     },
     {
         "id": "kein-rot",
@@ -34,7 +40,7 @@ STAMPS = [
         ),
         "code": "nored",
         "chapter": "Schritt 1",
-        "color_ids": [9, 12],
+        "color_ids": [7],
     },
     {
         "id": "invert",
@@ -46,7 +52,7 @@ STAMPS = [
         ),
         "code": "neg255",
         "chapter": "Schritt 1",
-        "color_ids": [19, 3],
+        "color_ids": [18],
     },
     {
         "id": "graustufen",
@@ -59,7 +65,7 @@ STAMPS = [
         ),
         "code": "avg3",
         "chapter": "Schritt 2",
-        "color_ids": [10, 13],
+        "color_ids": [20],
     },
     {
         "id": "helligkeit",
@@ -72,7 +78,7 @@ STAMPS = [
         ),
         "code": "lux50",
         "chapter": "Schritt 2",
-        "color_ids": [4, 1],
+        "color_ids": [6],
     },
     {
         "id": "schwellwert",
@@ -85,7 +91,7 @@ STAMPS = [
         ),
         "code": "binary",
         "chapter": "Schritt 3",
-        "color_ids": [14, 7],
+        "color_ids": [2],
     },
     {
         "id": "nachbarn",
@@ -98,7 +104,7 @@ STAMPS = [
         ),
         "code": "mix9",
         "chapter": "Schritt 4",
-        "color_ids": [20, 18],
+        "color_ids": [1, 17],
     },
     {
         "id": "spiegelei",
@@ -110,7 +116,7 @@ STAMPS = [
         ),
         "code": "flip",
         "chapter": "Schritt 5",
-        "color_ids": [2, 6],
+        "color_ids": [13, 15],
     },
     {
         "id": "eigener",
@@ -123,7 +129,7 @@ STAMPS = [
         ),
         "code": "myfx",
         "chapter": "Schritt 6",
-        "color_ids": [17, 5],
+        "color_ids": [10, 5],
     },
     {
         "id": "gipfel",
@@ -136,7 +142,7 @@ STAMPS = [
         ),
         "code": "summit",
         "chapter": "Schritt 7",
-        "color_ids": [15, 11],
+        "color_ids": [4, 11],
     },
 ]
 
