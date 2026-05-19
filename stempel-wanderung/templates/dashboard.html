@@ -45,12 +45,29 @@
     </p>
     <div class="stamp-grid">
       {% for stamp in stamps %}
-        <div class="stamp {% if stamp.id in claimed_set %}claimed{% endif %}">
+        {% set is_claimed = stamp.id in claimed_set %}
+        {% set is_ready = stamp.id in ready_set %}
+        <div id="stamp-{{ stamp.id }}"
+             class="stamp{% if is_claimed %} claimed{% elif is_ready %} ready{% endif %}">
           <span class="station-num">Station {{ stamp.station }}</span>
           <div class="stamp-title">{{ stamp.title }}</div>
           <div class="stamp-subtitle">{{ stamp.subtitle }}</div>
           <div class="stamp-req">{{ stamp.requirement }}</div>
           <div class="stamp-chapter">{{ stamp.chapter }}</div>
+          {% if not is_claimed %}
+            <form class="ready-form" method="post"
+                  action="{{ url_for('student_ready') }}">
+              <input type="hidden" name="stamp_id" value="{{ stamp.id }}">
+              <button type="submit"
+                      class="ready-btn{% if is_ready %} is-ready{% endif %}">
+                {% if is_ready %}
+                  ✓ Bereit zur Bewertung
+                {% else %}
+                  Bereit zur Bewertung
+                {% endif %}
+              </button>
+            </form>
+          {% endif %}
         </div>
       {% endfor %}
     </div>

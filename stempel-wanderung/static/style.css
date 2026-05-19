@@ -289,6 +289,43 @@ main.container { padding-top: 28px; padding-bottom: 60px; }
   letter-spacing: 0.5px;
 }
 
+/* ---- Student self-mark "Bereit zur Bewertung" button ---- */
+.stamp.ready {
+  border: 1.5px solid #9CA3AF;
+  background: #F2F3F5;
+}
+.stamp.ready .station-num {
+  background: #9CA3AF;
+  color: white;
+}
+.ready-form { margin: 10px 0 0; }
+button.ready-btn {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1.5px dashed #9CA3AF;
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, color 150ms;
+}
+button.ready-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+button.ready-btn.is-ready {
+  border-style: solid;
+  border-color: #6B7280;
+  background: #D9DCE0;
+  color: var(--ink);
+}
+button.ready-btn.is-ready:hover {
+  background: #C6CACF;
+}
+
 /* ============================================================ Teacher view */
 .grid-scroll { overflow-x: auto; }
 table.award-grid {
@@ -376,6 +413,18 @@ button.toggle.on {
 button.toggle.on:hover {
   background: #8E2C25;
   border-color: #8E2C25;
+}
+button.toggle.ready {
+  border: 2px solid #9CA3AF;
+  border-style: solid;
+  background: #D9DCE0;
+  color: #4B5563;
+  box-shadow: 1px 1px 0 rgba(75, 85, 99, 0.15);
+}
+button.toggle.ready:hover {
+  background: var(--cinnabar);
+  border-color: var(--cinnabar);
+  color: white;
 }
 button.toggle:active { transform: translateY(1px); }
 table.codes-table {

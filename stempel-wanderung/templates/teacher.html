@@ -27,18 +27,20 @@
       <tbody>
         {% for s in students %}
           {% set claimed = progress[s.username] %}
+          {% set ready_set = ready[s.username] %}
           <tr id="student-{{ s.username }}">
             <td class="student-col">{{ s.display_name }}</td>
             {% for stamp in stamps %}
               {% set is_claimed = stamp.id in claimed %}
+              {% set is_ready = (not is_claimed) and stamp.id in ready_set %}
               <td class="cell">
                 <form method="post" action="{{ url_for('teacher_toggle') }}">
                   <input type="hidden" name="username" value="{{ s.username }}">
                   <input type="hidden" name="stamp_id" value="{{ stamp.id }}">
                   <button type="submit"
-                          class="toggle {% if is_claimed %}on{% endif %}"
-                          title="{{ stamp.title }}{% if is_claimed %} (klick = entfernen){% else %} (klick = vergeben){% endif %}">
-                    {% if is_claimed %}✓{% else %}·{% endif %}
+                          class="toggle{% if is_claimed %} on{% elif is_ready %} ready{% endif %}"
+                          title="{{ stamp.title }}{% if is_claimed %} (klick = entfernen){% elif is_ready %} — bereit zur Bewertung (klick = vergeben){% else %} (klick = vergeben){% endif %}">
+                    {% if is_claimed %}✓{% elif is_ready %}✓{% else %}·{% endif %}
                   </button>
                 </form>
               </td>

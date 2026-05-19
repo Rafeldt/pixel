@@ -39,6 +39,42 @@ def get_db():
     return conn
 
 
+def init_db():
+    """Ensure schema is current. Idempotent (CREATE IF NOT EXISTS)."""
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.executescript(
+            """
+            CREATE TABLE IF NOT EXISTS students (
+              username      TEXT PRIMARY KEY,
+              display_name  TEXT NOT NULL,
+              klasse        TEXT,
+              password_hash TEXT NOT NULL,
+              created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS stamps (
+              username   TEXT NOT NULL,
+              stamp_id   TEXT NOT NULL,
+              claimed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              PRIMARY KEY (username, stamp_id),
+              FOREIGN KEY (username) REFERENCES students(username)
+                ON DELETE CASCADE
+            );
+            CREATE TABLE IF NOT EXISTS ready_marks (
+              username  TEXT NOT NULL,
+              stamp_id  TEXT NOT NULL,
+              marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              PRIMARY KEY (username, stamp_id),
+              FOREIGN KEY (username) REFERENCES students(username)
+                ON DELETE CASCADE
+            );
+            """
+        )
+
+
+init_db()
+
+
 @app.before_request
 def drop_stale_session():
     """Clear a logged-in session if the student no longer exists
@@ -105,12 +141,17 @@ def dashboard():
             "SELECT display_name FROM students WHERE username = ?",
             (username,),
         ).fetchone()
-        rows = conn.execute(
+        claimed_rows = conn.execute(
             "SELECT stamp_id FROM stamps WHERE username = ? "
             "ORDER BY claimed_at",
             (username,),
         ).fetchall()
-    claimed_ids = [r["stamp_id"] for r in rows]
+        ready_rows = conn.execute(
+            "SELECT stamp_id FROM ready_marks WHERE username = ?",
+            (username,),
+        ).fetchall()
+    claimed_ids = [r["stamp_id"] for r in claimed_rows]
+    ready_set = {r["stamp_id"] for r in ready_rows}
     return render_template(
         "dashboard.html",
         username=username,
@@ -118,7 +159,44 @@ def dashboard():
         stamps=STAMPS,
         claimed_ids=claimed_ids,
         claimed_set=set(claimed_ids),
+        ready_set=ready_set,
     )
+
+
+@app.route("/student/ready", methods=["POST"])
+def student_ready():
+    if "username" not in session:
+        return redirect(url_for("index"))
+    stamp_id = (request.form.get("stamp_id") or "").strip()
+    if not stamp_id or get_stamp_by_id(stamp_id) is None:
+        abort(400)
+    username = session["username"]
+    with get_db() as conn:
+        # Already-awarded stamps don't need a ready mark.
+        awarded = conn.execute(
+            "SELECT 1 FROM stamps WHERE username = ? AND stamp_id = ?",
+            (username, stamp_id),
+        ).fetchone()
+        if awarded:
+            return redirect(url_for("dashboard"))
+        existing = conn.execute(
+            "SELECT 1 FROM ready_marks WHERE username = ? AND stamp_id = ?",
+            (username, stamp_id),
+        ).fetchone()
+        if existing:
+            conn.execute(
+                "DELETE FROM ready_marks WHERE username = ? "
+                "AND stamp_id = ?",
+                (username, stamp_id),
+            )
+        else:
+            conn.execute(
+                "INSERT INTO ready_marks (username, stamp_id) "
+                "VALUES (?, ?)",
+                (username, stamp_id),
+            )
+        conn.commit()
+    return redirect(url_for("dashboard") + f"#stamp-{stamp_id}")
 
 
 # ===================================================================== Teacher
@@ -148,15 +226,22 @@ def teacher():
         stamp_rows = conn.execute(
             "SELECT username, stamp_id FROM stamps"
         ).fetchall()
+        ready_rows = conn.execute(
+            "SELECT username, stamp_id FROM ready_marks"
+        ).fetchall()
     progress = defaultdict(set)
     for r in stamp_rows:
         progress[r["username"]].add(r["stamp_id"])
+    ready = defaultdict(set)
+    for r in ready_rows:
+        ready[r["username"]].add(r["stamp_id"])
 
     return render_template(
         "teacher.html",
         students=students,
         stamps=STAMPS,
         progress=progress,
+        ready=ready,
     )
 
 
@@ -188,6 +273,12 @@ def teacher_toggle():
         else:
             conn.execute(
                 "INSERT INTO stamps (username, stamp_id) VALUES (?, ?)",
+                (username, stamp_id),
+            )
+            # Awarding a stamp clears any pending self-mark.
+            conn.execute(
+                "DELETE FROM ready_marks WHERE username = ? "
+                "AND stamp_id = ?",
                 (username, stamp_id),
             )
         conn.commit()

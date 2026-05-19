@@ -72,6 +72,13 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
           PRIMARY KEY (username, stamp_id),
           FOREIGN KEY (username) REFERENCES students(username) ON DELETE CASCADE
         );
+        CREATE TABLE IF NOT EXISTS ready_marks (
+          username  TEXT NOT NULL,
+          stamp_id  TEXT NOT NULL,
+          marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (username, stamp_id),
+          FOREIGN KEY (username) REFERENCES students(username) ON DELETE CASCADE
+        );
         """
     )
 
