@@ -35,16 +35,38 @@
 % ============================================================================
 \section{Schritt 0: Bild laden}
 
-Bevor du Filter schreiben kannst, musst du ein Bild laden. Setze die
-zwei Funktionen \texttt{lade\_bild} und \texttt{speichere\_bild} aus
-Kapitel~1 (Spielregeln) an den Anfang deiner Datei. Lade dann dein
-Probebild und gib Breite und H\"ohe aus:
+Bevor du Filter schreiben kannst, musst du ein Bild laden. Dazu
+verwenden wir die Python-Bibliothek \texttt{Pillow}. Lege ein Foto in
+denselben Ordner wie dein Python-Programm und l\"ade es mit folgendem
+Code:
 
 \begin{lstlisting}
-bild = lade_bild("foto.jpg")
-hoehe = len(bild)
-breite = len(bild[0])
+from PIL import Image
+
+img = Image.open("foto.jpg").convert("RGB")
+breite, hoehe = img.size
+
+bild = []
+for y in range(hoehe):
+    zeile = []
+    for x in range(breite):
+        zeile.append(img.getpixel((x, y)))
+    bild.append(zeile)
+
 print("Hoehe:", hoehe, " Breite:", breite)
+\end{lstlisting}
+
+Die ersten Zeilen \"offnen das Bild und holen seine Gr\"osse. Danach
+bauen die zwei verschachtelten Schleifen das Bild als verschachtelte
+Liste von Pixel-Tupeln $(R, G, B)$ auf, mit der du im Rest des Projekts
+arbeitest. Zum Speichern eines Bildes verwendest du am Ende:
+
+\begin{lstlisting}
+ergebnis_img = Image.new("RGB", (breite, hoehe))
+for y in range(hoehe):
+    for x in range(breite):
+        ergebnis_img.putpixel((x, y), bild[y][x])
+ergebnis_img.save("ergebnis.png")
 \end{lstlisting}
 
 \stempel{1}{Erstes Bild}

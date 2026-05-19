@@ -10,7 +10,7 @@
 
 {\color{maincolor}\textbf{\"Uberblick:}}
 \begin{itemize}[leftmargin=*]
-  \item Du kannst insgesamt \textbf{100 Punkte} erreichen, verteilt
+  \item Du kannst insgesamt \textbf{120 Punkte} erreichen, verteilt
     auf vier Bereiche.
   \item Den gr\"ossten Teil holst du dir mit den \textbf{Pflichtfiltern}.
     Daneben z\"ahlen dein \textbf{eigener Filter}, deine
@@ -25,20 +25,20 @@
 \begin{tikzpicture}
   \def\W{15}     % Gesamtbreite in cm (entspricht textwidth)
   \def\hgt{1.4}  % Hoehe in cm
-  % Hintergrundfarben (von dunkel nach hell, gewichtet nach Punktezahl)
-  \fill[maincolor]    (0,0)            rectangle (\W*0.50, \hgt);
-  \fill[maincolor!72] (\W*0.50, 0)     rectangle (\W*0.70, \hgt);
-  \fill[maincolor!50] (\W*0.70, 0)     rectangle (\W*0.85, \hgt);
-  \fill[maincolor!32] (\W*0.85, 0)     rectangle (\W,      \hgt);
+  % Anteile aus 120 Punkten: A=50 (0.4167), B=20 (0.1667), C=15 (0.125), D=35 (0.2917)
+  \fill[maincolor]    (0,0)              rectangle (\W*0.4167, \hgt);
+  \fill[maincolor!72] (\W*0.4167, 0)     rectangle (\W*0.5833, \hgt);
+  \fill[maincolor!50] (\W*0.5833, 0)     rectangle (\W*0.7083, \hgt);
+  \fill[maincolor!32] (\W*0.7083, 0)     rectangle (\W,        \hgt);
   % Beschriftungen
-  \node[white, font=\bfseries]            at (\W*0.25,\hgt*0.65) {A. Pflichtfilter};
-  \node[white, font=\footnotesize]        at (\W*0.25,\hgt*0.32) {50 Punkte};
-  \node[white, font=\bfseries\small]      at (\W*0.60,\hgt*0.65) {B. Eigen};
-  \node[white, font=\scriptsize]          at (\W*0.60,\hgt*0.32) {20 Pkt.};
-  \node[white, font=\bfseries\scriptsize] at (\W*0.775,\hgt*0.65) {C. Code};
-  \node[white, font=\tiny]                at (\W*0.775,\hgt*0.32) {15 Pkt.};
-  \node[white, font=\bfseries\scriptsize] at (\W*0.925,\hgt*0.65) {D. Abgabe};
-  \node[white, font=\tiny]                at (\W*0.925,\hgt*0.32) {15 Pkt.};
+  \node[white, font=\bfseries]            at (\W*0.2083,\hgt*0.65) {A. Pflichtfilter};
+  \node[white, font=\footnotesize]        at (\W*0.2083,\hgt*0.32) {50 Punkte};
+  \node[white, font=\bfseries\small]      at (\W*0.5000,\hgt*0.65) {B. Eigen};
+  \node[white, font=\scriptsize]          at (\W*0.5000,\hgt*0.32) {20 Pkt.};
+  \node[white, font=\bfseries\scriptsize] at (\W*0.6458,\hgt*0.65) {C. Code};
+  \node[white, font=\tiny]                at (\W*0.6458,\hgt*0.32) {15 Pkt.};
+  \node[white, font=\bfseries]            at (\W*0.8542,\hgt*0.65) {D. Abgabe};
+  \node[white, font=\footnotesize]        at (\W*0.8542,\hgt*0.32) {35 Punkte};
 \end{tikzpicture}
 \end{center}
 
@@ -155,7 +155,7 @@ Rand bewusst behandelt
 \end{center}
 
 % ============================================================================
-\section{D. Abgabe (15 Punkte)}
+\section{D. Abgabe (35 Punkte)}
 
 \begin{center}
 \begin{tabularx}{\textwidth}{>{\bfseries}p{4cm} X r}
@@ -174,7 +174,7 @@ Drei Beispielbild-Paare
 Bericht
   & 2 bis 3 A4-Seiten: Was hast du gemacht? Was war schwierig?
     Was hat dich \"uberrascht?
-  & 5 \\
+  & 25 \\
 \bottomrule
 \end{tabularx}
 \end{center}

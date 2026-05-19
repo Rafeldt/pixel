@@ -53,38 +53,8 @@ bestimmten Regel ver\"andert.
 bild[zeile][spalte]  # liefert einen Pixel (R, G, B)
 \end{lstlisting}
   \item Zum Laden und Speichern von Bilddateien verwendest du die
-    Bibliothek \texttt{Pillow}. Setze die folgenden zwei Funktionen
-    einmal an den Anfang deiner Datei. Sie laden ein Bild aus dem
-    aktuellen Ordner in eine verschachtelte Liste und speichern eine
-    verschachtelte Liste wieder als Bild:
-\begin{lstlisting}
-from PIL import Image
-
-def lade_bild(pfad):
-    img = Image.open(pfad).convert("RGB")
-    breite, hoehe = img.size
-    bild = []
-    for y in range(hoehe):
-        zeile = []
-        for x in range(breite):
-            zeile.append(img.getpixel((x, y)))
-        bild.append(zeile)
-    return bild
-
-def speichere_bild(bild, pfad):
-    hoehe = len(bild)
-    breite = len(bild[0])
-    img = Image.new("RGB", (breite, hoehe))
-    for y in range(hoehe):
-        for x in range(breite):
-            img.putpixel((x, y), bild[y][x])
-    img.save(pfad)
-\end{lstlisting}
-    Aufrufen kannst du sie so:
-\begin{lstlisting}
-bild = lade_bild("foto.jpg")
-speichere_bild(bild, "ergebnis.png")
-\end{lstlisting}
+    Bibliothek \texttt{Pillow}. Den genauen Code daf\"ur findest du in
+    Schritt~0 des Lernpfads.
   \item Alles andere (jede Filterlogik) schreibst du selbst.
 \end{itemize}
 
@@ -124,12 +94,5 @@ Du gibst am Ende drei Sachen ab:
 
 Die Abgabe l\"auft \"uber die normale Plattform der Klasse. Wie genau,
 besprechen wir gemeinsam.
-
-% ============================================================================
-\section{Zeitrahmen}
-
-Das Projekt l\"auft \"uber rund sieben Doppellektionen. Das n\"achste
-Kapitel zeigt dir, wie bewertet wird; danach folgt der \textit{Lernpfad}
-mit den eigentlichen Aufgaben.
 
 \closechapter
