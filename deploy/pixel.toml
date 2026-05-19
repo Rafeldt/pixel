@@ -1,25 +1,16 @@
 # Traefik dynamic config for pixel.rafeldt.ch
 # Drop this file into /opt/tljh/state/rules/ on the server.
-# Adjust the entryPoint and certResolver names if your TLJH/Traefik
-# uses different ones (check an existing rule like the one for kuersli.ch).
+# Matches the same conventions used by kuersli.toml on the production VPS.
 
 [http.routers.pixel]
   rule = "Host(`pixel.rafeldt.ch`)"
-  service = "pixel"
   entryPoints = ["https"]
-  [http.routers.pixel.tls]
-    certResolver = "default"
-
-[http.routers.pixel-http]
-  rule = "Host(`pixel.rafeldt.ch`)"
   service = "pixel"
-  entryPoints = ["http"]
-  middlewares = ["pixel-https-redirect"]
+  priority = 100
+  [http.routers.pixel.tls]
+    certResolver = "letsencrypt"
 
 [http.services.pixel.loadBalancer]
+  passHostHeader = true
   [[http.services.pixel.loadBalancer.servers]]
     url = "http://127.0.0.1:5001"
-
-[http.middlewares.pixel-https-redirect.redirectScheme]
-  scheme = "https"
-  permanent = true
