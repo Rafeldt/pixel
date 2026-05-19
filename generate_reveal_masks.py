@@ -16,8 +16,13 @@ from PIL import Image
 HERE = Path(__file__).parent
 DESIGN = HERE / "design-preview.jpg"
 OUT_DIR = HERE / "stempel-wanderung" / "static"
+CANVAS = OUT_DIR / "canvas.png"
 
 N_COLORS = 20
+# Pixels in the canvas brighter than this on the L (grayscale) channel
+# count as region interior. Anything darker (outlines, number labels)
+# stays untouched by reveal masks so the canvas structure remains visible.
+INTERIOR_THRESHOLD = 200
 
 
 def main():
@@ -36,10 +41,16 @@ def main():
     indices = np.array(quantized)
     h, w = indices.shape
 
+    # Build interior mask from the canvas so reveals don't paint over
+    # outlines or printed number labels.
+    canvas_l = np.array(Image.open(CANVAS).convert("L").resize((w, h)))
+    is_interior = canvas_l > INTERIOR_THRESHOLD
+    print(f"Canvas interior covers {is_interior.mean():.1%} of pixels.")
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     sizes = []
     for i in range(N_COLORS):
-        mask = indices == i
+        mask = (indices == i) & is_interior
         rgba = np.zeros((h, w, 4), dtype=np.uint8)
         rgba[mask, 0] = colors[i][0]
         rgba[mask, 1] = colors[i][1]
