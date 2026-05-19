@@ -129,7 +129,7 @@ STAMPS = [
         ),
         "code": "myfx",
         "chapter": "Schritt 6",
-        "color_ids": [10, 5],
+        "color_ids": [5],
     },
     {
         "id": "gipfel",
