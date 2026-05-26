@@ -11,15 +11,12 @@ of bildfilter_projekt.ipynb:
 Render examples (manim community 0.20.x):
     manim -ql bildfilter_animationen.py PixelFilter
     manim -qh bildfilter_animationen.py BoxBlur
-
-Render all scenes at preview quality:
-    manim -ql bildfilter_animationen.py
 """
 from manim import *
 import numpy as np
 
 # =====================================================================
-# Style: matches the MNG skript and pixel.rafeldt.ch aesthetic.
+# Style
 # =====================================================================
 MNG_BLUE       = "#0076BD"
 MNG_BLUE_DARK  = "#003C64"
@@ -31,7 +28,7 @@ INK_SOFT       = "#6B5F4F"
 
 config.background_color = PAPER
 
-# Sample 4x6 image (rows x cols): sky over a mountain ridge.
+# Sample 4x6 image (rows x cols)
 SAMPLE_IMG = [
     ["#FFD89B", "#FFD89B", "#FFC93C", "#FFC93C", "#FFD89B", "#FFD89B"],
     ["#FFD89B", "#FFE8C8", "#FFFFFF", "#FFFFFF", "#FFD89B", "#FFD89B"],
@@ -44,13 +41,8 @@ SAMPLE_IMG = [
 # Helpers
 # =====================================================================
 
-def make_pixel_grid(colors, square_size=0.55, stroke_color=WHITE, stroke_width=2):
-    """Return a VGroup of coloured squares laid out as a 2D pixel grid.
-
-    `colors[y][x]` is the colour of the pixel at row y, column x.
-    The group is centred at the origin; access individual cells via
-    group.cells[y][x].
-    """
+def make_pixel_grid(colors, square_size=0.55, stroke_color=WHITE,
+                    stroke_width=2):
     rows = len(colors)
     cols = len(colors[0])
     grid = VGroup()
@@ -76,7 +68,6 @@ def make_pixel_grid(colors, square_size=0.55, stroke_color=WHITE, stroke_width=2
 
 
 def empty_grid_like(grid, fill=BLACK):
-    """A same-shape grid with every cell painted `fill`."""
     rows, cols = grid.n_rows, grid.n_cols
     return make_pixel_grid([[fill] * cols for _ in range(rows)])
 
@@ -98,88 +89,103 @@ def code_line(text, color=INK):
 # =====================================================================
 
 class PixelFilter(Scene):
-    """Vorlage 1: each new pixel depends only on the SAME pixel in the
-    original image. Walked through with kein_rot as the example."""
+    """Vorlage 1: jeder neue Pixel haengt nur vom GLEICHEN Eingangspixel ab.
+    Beispiel: kein_rot."""
 
     def construct(self):
-        # --- Title --------------------------------------------------
-        t = title_text("Vorlage 1: Pixel für Pixel").to_edge(UP)
-        sub = label("Beispiel: kein_rot — der Rotwert wird 0",
-                    color=INK_SOFT, size=22).next_to(t, DOWN, buff=0.15)
-        self.play(Write(t), FadeIn(sub, shift=DOWN * 0.2))
-        self.wait(0.5)
+        # --- Title and subtitle -------------------------------------
+        t = title_text("Vorlage 1: Pixel für Pixel").to_edge(UP, buff=0.4)
+        sub = label("Beispiel: kein_rot, der Rotwert wird 0",
+                    color=INK_SOFT, size=22).next_to(t, DOWN, buff=0.2)
+        self.play(Write(t), run_time=1.2)
+        self.play(FadeIn(sub, shift=DOWN * 0.2), run_time=0.8)
+        self.wait(1.5)
 
         # --- Build the two grids ------------------------------------
         original = make_pixel_grid(SAMPLE_IMG, square_size=0.55)
         new = empty_grid_like(original, fill="#222222")
-
-        original.shift(LEFT * 3.5 + DOWN * 0.3)
-        new.shift(RIGHT * 3.5 + DOWN * 0.3)
+        original.shift(LEFT * 3.4 + DOWN * 0.2)
+        new.shift(RIGHT * 3.4 + DOWN * 0.2)
 
         lbl_in = label("bild (Original)", color=MNG_BLUE)\
-            .next_to(original, UP, buff=0.2)
+            .next_to(original, UP, buff=0.25)
         lbl_out = label("neues_bild", color=CINNABAR)\
-            .next_to(new, UP, buff=0.2)
+            .next_to(new, UP, buff=0.25)
 
-        self.play(FadeIn(original, lbl_in), FadeIn(new, lbl_out))
-        self.wait(0.4)
+        self.play(FadeIn(original, shift=UP * 0.2),
+                  FadeIn(lbl_in, shift=UP * 0.2), run_time=1.0)
+        self.wait(0.6)
+        self.play(FadeIn(new, shift=UP * 0.2),
+                  FadeIn(lbl_out, shift=UP * 0.2), run_time=1.0)
+        self.wait(1.0)
 
-        # --- A "reading cursor" walks the original ------------------
+        # --- Reading cursor walks the original ----------------------
         cursor = Square(side_length=0.62, stroke_color=CINNABAR,
                         stroke_width=5, fill_opacity=0)
         cursor.move_to(original.cells[0][0].get_center())
+        pixel_label = label("Pixel = (r, g, b)  ➜  (0, g, b)",
+                            color=INK, size=22).to_edge(DOWN, buff=0.7)
+        self.play(Create(cursor), FadeIn(pixel_label, shift=UP * 0.2),
+                  run_time=1.0)
+        self.wait(1.2)
 
-        # Pixel value readout
-        pixel_label = label("(r, g, b)").to_edge(DOWN, buff=0.6)
-        self.play(Create(cursor), FadeIn(pixel_label, shift=UP * 0.2))
-
-        def pixel_color(y, x):
-            return SAMPLE_IMG[y][x]
-
-        def show_pixel(y, x, fast=False):
-            """Animate: highlight (y,x), 'remove red', paint output."""
-            c = pixel_color(y, x)
-            new_color = "#" + "00" + c[3:]  # zero out the red byte
-            if fast:
+        def show_pixel(y, x, slow=False):
+            c = SAMPLE_IMG[y][x]
+            new_color = "#" + "00" + c[3:]
+            if slow:
                 self.play(
-                    cursor.animate.move_to(original.cells[y][x].get_center()),
-                    new.cells[y][x].animate.set_fill(new_color, opacity=1),
-                    run_time=0.18,
+                    cursor.animate.move_to(
+                        original.cells[y][x].get_center()),
+                    run_time=0.9,
                 )
+                self.wait(0.25)
+                self.play(
+                    new.cells[y][x].animate.set_fill(new_color, opacity=1),
+                    run_time=0.7,
+                )
+                self.wait(0.25)
             else:
                 self.play(
-                    cursor.animate.move_to(original.cells[y][x].get_center()),
-                    run_time=0.4,
-                )
-                self.play(
+                    cursor.animate.move_to(
+                        original.cells[y][x].get_center()),
                     new.cells[y][x].animate.set_fill(new_color, opacity=1),
-                    run_time=0.4,
+                    run_time=0.45,
                 )
 
-        # First three pixels: animated slowly with explanation
-        for (y, x) in [(0, 0), (0, 1), (0, 2)]:
-            show_pixel(y, x, fast=False)
+        # First 4 pixels: slow, with pauses
+        for (y, x) in [(0, 0), (0, 1), (0, 2), (0, 3)]:
+            show_pixel(y, x, slow=True)
 
-        # The rest: fast sweep
-        for y in range(original.n_rows):
-            for x in range(original.n_cols):
-                if (y, x) in [(0, 0), (0, 1), (0, 2)]:
-                    continue
-                show_pixel(y, x, fast=True)
+        # Remaining pixels: medium pace
+        remaining = [(y, x) for y in range(original.n_rows)
+                     for x in range(original.n_cols)
+                     if (y, x) not in [(0, 0), (0, 1), (0, 2), (0, 3)]]
+        for (y, x) in remaining:
+            show_pixel(y, x, slow=False)
 
-        self.play(FadeOut(cursor), FadeOut(pixel_label))
-        self.wait(0.5)
+        self.wait(0.8)
+        self.play(FadeOut(cursor), FadeOut(pixel_label), run_time=0.8)
+        self.wait(0.4)
 
-        # --- Show the pattern as pseudocode -------------------------
+        # --- Pseudocode block ---------------------------------------
+        # Shift grids up so pseudocode below has room
+        self.play(
+            original.animate.shift(UP * 0.4),
+            lbl_in.animate.shift(UP * 0.4),
+            new.animate.shift(UP * 0.4),
+            lbl_out.animate.shift(UP * 0.4),
+            run_time=0.8,
+        )
+
         block = VGroup(
             code_line("für jede Zeile y des Bildes:"),
             code_line("    für jede Spalte x:"),
             code_line("        r, g, b = bild[y][x]"),
             code_line("        neues_bild[y][x] = (0, g, b)"),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.12).to_edge(DOWN, buff=0.5)
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).to_edge(DOWN, buff=0.5)
 
-        self.play(Write(block))
-        self.wait(2.5)
+        self.play(Write(block), run_time=2.5)
+        self.wait(4.0)
 
 
 # =====================================================================
@@ -187,42 +193,51 @@ class PixelFilter(Scene):
 # =====================================================================
 
 class PositionsFilter(Scene):
-    """Vorlage 2: build an empty new image, then write each input pixel
-    to a (possibly different) output position. Demonstrated with a
-    horizontal mirror."""
+    """Vorlage 2: leeres Bild anlegen, dann jeden Pixel an eine
+    moeglicherweise andere Position schreiben. Beispiel: horizontal
+    spiegeln."""
 
     def construct(self):
-        t = title_text("Vorlage 2: Position frei wählen").to_edge(UP)
+        t = title_text("Vorlage 2: Position frei wählen")\
+            .to_edge(UP, buff=0.4)
         sub = label("Beispiel: Bild horizontal spiegeln",
-                    color=INK_SOFT, size=22).next_to(t, DOWN, buff=0.15)
-        self.play(Write(t), FadeIn(sub, shift=DOWN * 0.2))
-        self.wait(0.4)
+                    color=INK_SOFT, size=22).next_to(t, DOWN, buff=0.2)
+        self.play(Write(t), run_time=1.2)
+        self.play(FadeIn(sub, shift=DOWN * 0.2), run_time=0.8)
+        self.wait(1.5)
 
         original = make_pixel_grid(SAMPLE_IMG, square_size=0.55)
         new = empty_grid_like(original, fill="#222222")
-        original.shift(LEFT * 3.5 + DOWN * 0.3)
-        new.shift(RIGHT * 3.5 + DOWN * 0.3)
+        original.shift(LEFT * 3.4 + DOWN * 0.2)
+        new.shift(RIGHT * 3.4 + DOWN * 0.2)
 
-        lbl_in = label("bild", color=MNG_BLUE).next_to(original, UP, buff=0.2)
+        lbl_in = label("bild", color=MNG_BLUE)\
+            .next_to(original, UP, buff=0.25)
         lbl_out = label("neues_bild", color=CINNABAR)\
-            .next_to(new, UP, buff=0.2)
-        note = label("Schritt 1: leeres Bild anlegen (alles schwarz)",
-                     color=INK_SOFT, size=20).to_edge(DOWN, buff=0.6)
+            .next_to(new, UP, buff=0.25)
 
-        self.play(FadeIn(original, lbl_in))
-        self.play(FadeIn(new, lbl_out), Write(note))
-        self.wait(0.6)
+        # --- Step 1: empty image ------------------------------------
+        note1 = label("Schritt 1: leeres Bild anlegen (alles schwarz)",
+                      color=INK_SOFT, size=22).to_edge(DOWN, buff=0.7)
+        self.play(FadeIn(original, shift=UP * 0.2),
+                  FadeIn(lbl_in, shift=UP * 0.2), run_time=1.0)
+        self.wait(0.8)
+        self.play(FadeIn(new, shift=UP * 0.2),
+                  FadeIn(lbl_out, shift=UP * 0.2),
+                  Write(note1), run_time=1.2)
+        self.wait(2.0)
 
         # --- Step 2: per pixel, draw an arrow to the mirrored x -----
-        self.play(FadeOut(note))
+        self.play(FadeOut(note1), run_time=0.6)
         note2 = label("Schritt 2: jeden Pixel an die "
                       "gespiegelte Stelle schreiben",
-                      color=INK_SOFT, size=20).to_edge(DOWN, buff=0.6)
-        self.play(FadeIn(note2))
+                      color=INK_SOFT, size=22).to_edge(DOWN, buff=0.7)
+        self.play(FadeIn(note2), run_time=0.8)
+        self.wait(1.2)
 
         cols = original.n_cols
 
-        def show_mirror(y, x, fast=False):
+        def show_mirror(y, x, slow=False):
             src = original.cells[y][x]
             dst = new.cells[y][cols - 1 - x]
             arrow = CurvedArrow(
@@ -232,41 +247,54 @@ class PositionsFilter(Scene):
                 stroke_width=3,
                 angle=-PI / 4,
             )
-            if fast:
+            if slow:
+                self.play(Create(arrow), run_time=0.9)
+                self.wait(0.25)
                 self.play(
-                    Create(arrow),
                     dst.animate.set_fill(SAMPLE_IMG[y][x], opacity=1),
-                    run_time=0.25,
+                    run_time=0.7,
                 )
-                self.play(FadeOut(arrow), run_time=0.1)
+                self.wait(0.2)
+                self.play(FadeOut(arrow), run_time=0.4)
             else:
-                self.play(Create(arrow), run_time=0.5)
+                self.play(Create(arrow), run_time=0.4)
                 self.play(
                     dst.animate.set_fill(SAMPLE_IMG[y][x], opacity=1),
-                    run_time=0.35,
+                    run_time=0.4,
                 )
                 self.play(FadeOut(arrow), run_time=0.25)
 
-        # First two pixels: slow
-        for (y, x) in [(0, 0), (0, 1)]:
-            show_mirror(y, x, fast=False)
+        # First 3 pixels: slow
+        for (y, x) in [(0, 0), (0, 1), (0, 2)]:
+            show_mirror(y, x, slow=True)
 
-        # Rest: fast
-        for y in range(original.n_rows):
-            for x in range(original.n_cols):
-                if (y, x) in [(0, 0), (0, 1)]:
-                    continue
-                show_mirror(y, x, fast=True)
+        # Remaining: medium
+        remaining = [(y, x) for y in range(original.n_rows)
+                     for x in range(original.n_cols)
+                     if (y, x) not in [(0, 0), (0, 1), (0, 2)]]
+        for (y, x) in remaining:
+            show_mirror(y, x, slow=False)
 
-        self.play(FadeOut(note2))
+        self.wait(1.0)
+        self.play(FadeOut(note2), run_time=0.6)
+
+        # Shift up to make room for code block
+        self.play(
+            original.animate.shift(UP * 0.4),
+            lbl_in.animate.shift(UP * 0.4),
+            new.animate.shift(UP * 0.4),
+            lbl_out.animate.shift(UP * 0.4),
+            run_time=0.8,
+        )
 
         block = VGroup(
             code_line("für jede Zeile y:"),
             code_line("    für jede Spalte x:"),
-            code_line("        neues_bild[y][breite - 1 - x] = bild[y][x]"),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.12).to_edge(DOWN, buff=0.5)
-        self.play(Write(block))
-        self.wait(2.5)
+            code_line("        neues_bild[y][breite - 1 - x]"
+                      " = bild[y][x]"),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).to_edge(DOWN, buff=0.5)
+        self.play(Write(block), run_time=2.5)
+        self.wait(4.0)
 
 
 # =====================================================================
@@ -279,16 +307,16 @@ class BoxBlur(Scene):
       Phase 2: dasselbe mit einer doppelten for-Schleife über [-1, 0, 1]."""
 
     def construct(self):
-        t = title_text("Nachbarn mischen — Box-Blur").to_edge(UP)
-        self.play(Write(t))
-        self.wait(0.3)
+        t = title_text("Nachbarn mischen: Box-Blur").to_edge(UP, buff=0.4)
+        self.play(Write(t), run_time=1.2)
+        self.wait(1.0)
 
-        # --- Setup grid ------------------------------------------------
+        # --- Grid -----------------------------------------------------
         rng = np.random.default_rng(7)
         vals = rng.integers(80, 220, size=(5, 5))
         gray = [[f"#{v:02x}{v:02x}{v:02x}" for v in row] for row in vals]
         grid = make_pixel_grid(gray, square_size=0.85)
-        grid.shift(LEFT * 3.2 + DOWN * 0.2)
+        grid.shift(LEFT * 3.4 + DOWN * 0.3)
 
         nums = VGroup()
         for y in range(5):
@@ -298,26 +326,25 @@ class BoxBlur(Scene):
                           weight=BOLD)
                 t_.move_to(grid.cells[y][x].get_center())
                 nums.add(t_)
-        self.play(FadeIn(grid), Write(nums))
-        self.wait(0.2)
+        self.play(FadeIn(grid), Write(nums), run_time=1.5)
+        self.wait(1.2)
 
-        # Central pixel coords
         cy, cx = 2, 2
-
         center_box = Square(side_length=0.88, stroke_color=CINNABAR,
                             stroke_width=6, fill_opacity=0)
         center_box.move_to(grid.cells[cy][cx].get_center())
         center_label = Text("bild[y][x]", font="JetBrains Mono",
-                            font_size=18, color=CINNABAR)
-        center_label.next_to(grid, DOWN, buff=0.35)
-        self.play(Create(center_box), Write(center_label))
-        self.wait(0.5)
+                            font_size=20, color=CINNABAR)
+        center_label.next_to(grid, DOWN, buff=0.4)
+        self.play(Create(center_box), Write(center_label), run_time=1.2)
+        self.wait(1.5)
 
-        # --- PHASE 1: 9 explicit accesses ------------------------------
+        # --- PHASE 1: 9 explicit accesses ----------------------------
         phase_label = label("Phase 1: alle 9 Pixel von Hand",
-                            color=MNG_BLUE_DARK, size=22)
-        phase_label.to_edge(UP, buff=1.1).shift(RIGHT * 3.0)
-        self.play(FadeIn(phase_label, shift=LEFT * 0.3))
+                            color=MNG_BLUE_DARK, size=24)
+        phase_label.to_edge(UP, buff=1.2).shift(RIGHT * 3.2)
+        self.play(FadeIn(phase_label, shift=LEFT * 0.3), run_time=1.0)
+        self.wait(0.8)
 
         explicit_lines = [
             "summe  = bild[y-1][x-1]",
@@ -331,11 +358,14 @@ class BoxBlur(Scene):
             "summe += bild[y+1][x+1]",
         ]
         explicit_block = VGroup(*[
-            Text(c, font="JetBrains Mono", font_size=15, color=INK_SOFT)
+            Text(c, font="JetBrains Mono", font_size=16,
+                 color=INK_SOFT)
             for c in explicit_lines
-        ]).arrange(DOWN, aligned_edge=LEFT, buff=0.06)
-        explicit_block.next_to(phase_label, DOWN, buff=0.3, aligned_edge=LEFT)
-        self.play(FadeIn(explicit_block, shift=UP * 0.2))
+        ]).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
+        explicit_block.next_to(phase_label, DOWN, buff=0.35,
+                               aligned_edge=LEFT)
+        self.play(FadeIn(explicit_block, shift=UP * 0.2), run_time=1.2)
+        self.wait(1.0)
 
         neighbors = [
             (cy - 1, cx - 1), (cy - 1, cx), (cy - 1, cx + 1),
@@ -348,42 +378,47 @@ class BoxBlur(Scene):
             self.play(
                 cell.animate.set_stroke(CINNABAR, width=5),
                 cline.animate.set_color(INK).set_opacity(1.0),
-                run_time=0.28,
+                run_time=0.55,
             )
-            self.wait(0.08)
+            self.wait(0.35)
             self.play(
                 cell.animate.set_stroke(WHITE, width=2),
-                run_time=0.12,
+                run_time=0.25,
             )
 
-        # Show the average
+        self.wait(0.6)
+
         center_val = int(vals[cy - 1:cy + 2, cx - 1:cx + 2].mean())
         result_line = Text(f"neu = summe // 9 = {center_val}",
                            font="JetBrains Mono", font_size=18,
                            color=MNG_BLUE_DARK, weight=BOLD)
-        result_line.next_to(explicit_block, DOWN, buff=0.25, aligned_edge=LEFT)
-        self.play(Write(result_line))
-        self.wait(1.5)
+        result_line.next_to(explicit_block, DOWN, buff=0.35,
+                            aligned_edge=LEFT)
+        self.play(Write(result_line), run_time=1.5)
+        self.wait(2.5)
 
-        # --- Transition ----------------------------------------------
+        # --- Transition -----------------------------------------------
         transition = label("Geht das kürzer?",
-                           color=CINNABAR, size=26)
+                           color=CINNABAR, size=28)
         transition.to_edge(DOWN, buff=0.6)
-        self.play(Write(transition))
-        self.wait(1.0)
+        self.play(Write(transition), run_time=1.2)
+        self.wait(2.5)
 
         self.play(
             FadeOut(phase_label),
             FadeOut(explicit_block),
             FadeOut(result_line),
             FadeOut(transition),
+            run_time=1.0,
         )
+        self.wait(0.5)
 
         # --- PHASE 2: double for-loop --------------------------------
         phase2_label = label("Phase 2: doppelte for-Schleife",
-                             color=MNG_BLUE_DARK, size=22)
-        phase2_label.to_edge(UP, buff=1.1).shift(RIGHT * 3.0)
-        self.play(FadeIn(phase2_label, shift=LEFT * 0.3))
+                             color=MNG_BLUE_DARK, size=24)
+        phase2_label.to_edge(UP, buff=1.2).shift(RIGHT * 3.2)
+        self.play(FadeIn(phase2_label, shift=LEFT * 0.3), run_time=1.0)
+        self.wait(0.5)
 
         loop_lines = [
             "summe = 0",
@@ -397,59 +432,63 @@ class BoxBlur(Scene):
             Text(c if c else " ", font="JetBrains Mono",
                  font_size=18, color=INK)
             for c in loop_lines
-        ]).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
-        loop_block.next_to(phase2_label, DOWN, buff=0.3, aligned_edge=LEFT)
-        self.play(FadeIn(loop_block, shift=UP * 0.2))
-        self.wait(0.3)
+        ]).arrange(DOWN, aligned_edge=LEFT, buff=0.13)
+        loop_block.next_to(phase2_label, DOWN, buff=0.35, aligned_edge=LEFT)
+        self.play(FadeIn(loop_block, shift=UP * 0.2), run_time=1.5)
+        self.wait(2.0)
 
-        # Live loop-state tracker under the loop block
+        # Live tracker
         dz_tracker = Text("dz = ?", font="JetBrains Mono",
                           font_size=20, color=CINNABAR)
         ds_tracker = Text("ds = ?", font="JetBrains Mono",
                           font_size=20, color=CINNABAR)
         tracker = VGroup(dz_tracker, ds_tracker)\
-            .arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-        tracker.next_to(loop_block, DOWN, buff=0.4, aligned_edge=LEFT)
-        self.play(FadeIn(tracker))
+            .arrange(DOWN, aligned_edge=LEFT, buff=0.15)
+        tracker.next_to(loop_block, DOWN, buff=0.5, aligned_edge=LEFT)
+        self.play(FadeIn(tracker), run_time=0.8)
+        self.wait(0.6)
+
+        def fmt(name, val):
+            sign = " " if val >= 0 else ""
+            return f"{name} = {sign}{val}"
 
         for dz in [-1, 0, 1]:
-            new_dz = Text(f"dz = {dz:+d}".replace("+", " ").replace(" -1", "-1")
-                          if dz != 0 else "dz =  0",
-                          font="JetBrains Mono", font_size=20, color=CINNABAR)
-            new_dz.move_to(dz_tracker)
-            self.play(Transform(dz_tracker, new_dz), run_time=0.25)
+            new_dz = Text(fmt("dz", dz), font="JetBrains Mono",
+                          font_size=20, color=CINNABAR)
+            new_dz.move_to(dz_tracker, aligned_edge=LEFT)
+            self.play(Transform(dz_tracker, new_dz), run_time=0.5)
+            self.wait(0.2)
             for ds in [-1, 0, 1]:
-                new_ds = Text(f"ds = {ds:+d}".replace("+", " ")
-                              .replace(" -1", "-1")
-                              if ds != 0 else "ds =  0",
-                              font="JetBrains Mono", font_size=20,
-                              color=CINNABAR)
-                new_ds.move_to(ds_tracker)
+                new_ds = Text(fmt("ds", ds), font="JetBrains Mono",
+                              font_size=20, color=CINNABAR)
+                new_ds.move_to(ds_tracker, aligned_edge=LEFT)
                 ny, nx = cy + dz, cx + ds
                 cell = grid.cells[ny][nx]
                 self.play(
                     Transform(ds_tracker, new_ds),
                     cell.animate.set_stroke(CINNABAR, width=5),
-                    run_time=0.28,
+                    run_time=0.55,
                 )
-                self.wait(0.08)
+                self.wait(0.3)
                 self.play(
                     cell.animate.set_stroke(WHITE, width=2),
-                    run_time=0.12,
+                    run_time=0.2,
                 )
+
+        self.wait(0.8)
 
         result_line2 = Text(f"neu = {center_val}",
                             font="JetBrains Mono", font_size=22,
                             color=MNG_BLUE_DARK, weight=BOLD)
-        result_line2.next_to(tracker, DOWN, buff=0.3, aligned_edge=LEFT)
-        self.play(Write(result_line2))
-        self.wait(0.5)
+        result_line2.next_to(tracker, DOWN, buff=0.4, aligned_edge=LEFT)
+        self.play(Write(result_line2), run_time=1.2)
+        self.wait(1.2)
 
         msg = label("Gleicher Wert, viel weniger Code.",
-                    color=CINNABAR, size=24)
-        msg.to_edge(DOWN, buff=0.3)
-        self.play(Write(msg))
-        self.wait(2.0)
+                    color=CINNABAR, size=26)
+        msg.to_edge(DOWN, buff=0.4)
+        self.play(Write(msg), run_time=1.5)
+        self.wait(3.5)
 
 
 # =====================================================================
@@ -457,16 +496,17 @@ class BoxBlur(Scene):
 # =====================================================================
 
 class VideoPipeline(Scene):
-    """bearbeite_video: load → split into frames → filter each → reassemble."""
+    """bearbeite_video: load, split into frames, filter each, reassemble."""
 
     def construct(self):
-        t = title_text("Video filtern — Frame für Frame").to_edge(UP)
-        self.play(Write(t))
-        self.wait(0.3)
+        t = title_text("Video filtern: Frame für Frame")\
+            .to_edge(UP, buff=0.4)
+        self.play(Write(t), run_time=1.2)
+        self.wait(1.2)
 
-        # --- Input filmstrip ----------------------------------------
-        in_label = label("Eingabevideo", color=MNG_BLUE, size=22)
-        out_label = label("Gefiltertes Video", color=CINNABAR, size=22)
+        # --- Filmstrips ----------------------------------------------
+        in_label = label("Eingabevideo", color=MNG_BLUE, size=24)
+        out_label = label("Gefiltertes Video", color=CINNABAR, size=24)
 
         def make_filmstrip(palette, n=5, frame_size=1.2):
             strip = VGroup()
@@ -474,10 +514,9 @@ class VideoPipeline(Scene):
                 f = Rectangle(width=frame_size, height=frame_size * 0.7)
                 f.set_fill(palette[i % len(palette)], opacity=1)
                 f.set_stroke(INK, width=2)
-                # perforations
                 perf_top = VGroup(*[
                     Square(side_length=0.08).set_fill(INK, opacity=1)
-                                       .set_stroke(width=0)
+                                            .set_stroke(width=0)
                     for _ in range(4)
                 ]).arrange(RIGHT, buff=0.18)
                 perf_top.scale(0.6).next_to(f, UP, buff=0.05)
@@ -489,12 +528,13 @@ class VideoPipeline(Scene):
 
         in_strip = make_filmstrip(["#FFD89B", "#FFC93C", "#9AAEC8",
                                    "#6E83A3", "#5C7B4F"])
-        in_strip.shift(UP * 1.6)
-        in_label.next_to(in_strip, UP, buff=0.2)
-        self.play(FadeIn(in_strip, shift=DOWN * 0.2), Write(in_label))
-        self.wait(0.3)
+        in_strip.shift(UP * 1.7)
+        in_label.next_to(in_strip, UP, buff=0.25)
+        self.play(FadeIn(in_strip, shift=DOWN * 0.2),
+                  Write(in_label), run_time=1.4)
+        self.wait(1.5)
 
-        # --- Filter box in the middle -------------------------------
+        # --- Filter box in the middle --------------------------------
         filter_box = RoundedRectangle(
             width=3.0, height=1.3, corner_radius=0.15,
             stroke_color=CINNABAR, stroke_width=4,
@@ -503,46 +543,46 @@ class VideoPipeline(Scene):
                             font_size=22, color=MNG_BLUE_DARK)
         filter_label.move_to(filter_box)
         filter_group = VGroup(filter_box, filter_label)
-        filter_group.move_to(ORIGIN + DOWN * 0.2)
-        self.play(FadeIn(filter_group, shift=UP * 0.2))
-        self.wait(0.3)
+        filter_group.move_to(ORIGIN + DOWN * 0.3)
+        self.play(FadeIn(filter_group, shift=UP * 0.2), run_time=1.2)
+        self.wait(1.0)
 
-        # --- Output filmstrip (empty) -------------------------------
-        out_strip = make_filmstrip(["#222222"] * 5).shift(DOWN * 2.0)
-        out_label.next_to(out_strip, DOWN, buff=0.2)
-        self.play(FadeIn(out_strip), Write(out_label))
+        # --- Output filmstrip (empty) --------------------------------
+        out_strip = make_filmstrip(["#222222"] * 5).shift(DOWN * 2.4)
+        out_label.next_to(out_strip, DOWN, buff=0.25)
+        self.play(FadeIn(out_strip), Write(out_label), run_time=1.2)
+        self.wait(1.5)
 
-        # --- Animate one frame at a time travelling through filter --
-        # Map each input frame to its filtered colour (kein_rot ish: zero R)
+        # --- Each frame travels through filter -----------------------
         in_palette = ["#FFD89B", "#FFC93C", "#9AAEC8", "#6E83A3", "#5C7B4F"]
-        # zero the R byte
         out_palette = ["#" + "00" + c[3:] for c in in_palette]
 
         for i in range(5):
             in_cell = in_strip[i]
             out_cell = out_strip[i]
 
-            # Float a copy of the frame through the filter
             traveler = in_cell.copy()
             self.play(
                 traveler.animate.move_to(filter_box.get_center()),
-                run_time=0.45,
+                run_time=0.9,
             )
-            # Recolour inside the filter
             traveler[0].set_fill(out_palette[i], opacity=1)
-            self.play(filter_box.animate.set_stroke(width=6), run_time=0.1)
-            self.play(filter_box.animate.set_stroke(width=4), run_time=0.1)
-            # Drop it into the output strip
+            self.play(filter_box.animate.set_stroke(width=7), run_time=0.2)
+            self.play(filter_box.animate.set_stroke(width=4), run_time=0.2)
             self.play(
                 traveler.animate.move_to(out_cell.get_center()),
                 out_cell[0].animate.set_fill(out_palette[i], opacity=1),
-                run_time=0.45,
+                run_time=0.9,
             )
             self.remove(traveler)
+            self.wait(0.3)
 
-        self.wait(0.5)
-        msg = label("60 Frames pro Sekunde · jedes Frame ein Bild",
+        self.wait(1.2)
+        msg = label("Jedes Frame wird einzeln gefiltert.",
                     color=INK_SOFT, size=22)
-        msg.to_edge(DOWN, buff=0.4)
-        self.play(Write(msg))
-        self.wait(2.0)
+        msg.to_edge(DOWN, buff=0.15)
+        # If out_label is at buff 0.25 from out_strip bottom, msg should
+        # not overlap; check by placing msg below out_label.
+        msg.next_to(out_label, DOWN, buff=0.15)
+        self.play(Write(msg), run_time=1.5)
+        self.wait(3.5)
