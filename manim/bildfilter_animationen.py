@@ -13,6 +13,7 @@ Render examples (manim community 0.20.x):
     manim -qh bildfilter_animationen.py BoxBlur
 """
 from manim import *
+import colorsys
 import numpy as np
 
 # =====================================================================
@@ -35,6 +36,28 @@ SAMPLE_IMG = [
     ["#9AAEC8", "#9AAEC8", "#FFFFFF", "#FFFFFF", "#6E83A3", "#6E83A3"],
     ["#5C7B4F", "#5C7B4F", "#6E8B5A", "#6E8B5A", "#4A7BA0", "#4A7BA0"],
 ]
+
+
+def build_gradient_sample(rows=4, cols=6, hue_from=25, hue_to=240,
+                         sat_from=0.95, sat_to=0.20, lightness=0.55):
+    """Build a sample image with:
+       * a hue gradient from top (`hue_from`) to bottom (`hue_to`), and
+       * a saturation gradient from left (`sat_from`) to right (`sat_to`).
+       No identical pixels — used for the mirroring scene so the swap is
+       unambiguous. Hues are HSL degrees.
+    """
+    img = []
+    for y in range(rows):
+        denom_y = max(1, rows - 1)
+        hue = hue_from + (y / denom_y) * (hue_to - hue_from)
+        row = []
+        for x in range(cols):
+            denom_x = max(1, cols - 1)
+            sat = sat_from + (x / denom_x) * (sat_to - sat_from)
+            r, g, b = colorsys.hls_to_rgb(hue / 360.0, lightness, sat)
+            row.append(f"#{int(r*255):02X}{int(g*255):02X}{int(b*255):02X}")
+        img.append(row)
+    return img
 
 
 # =====================================================================
@@ -206,7 +229,10 @@ class PositionsFilter(Scene):
         self.play(FadeIn(sub, shift=DOWN * 0.2), run_time=0.8)
         self.wait(1.5)
 
-        original = make_pixel_grid(SAMPLE_IMG, square_size=0.55)
+        # Hue gradient top→bottom, saturation gradient left→right.
+        # Every pixel unique — makes the horizontal swap unambiguous.
+        mirror_img = build_gradient_sample(rows=4, cols=6)
+        original = make_pixel_grid(mirror_img, square_size=0.55)
         new = empty_grid_like(original, fill="#222222")
         original.shift(LEFT * 3.4 + DOWN * 0.2)
         new.shift(RIGHT * 3.4 + DOWN * 0.2)
@@ -251,7 +277,7 @@ class PositionsFilter(Scene):
                 self.play(Create(arrow), run_time=0.9)
                 self.wait(0.25)
                 self.play(
-                    dst.animate.set_fill(SAMPLE_IMG[y][x], opacity=1),
+                    dst.animate.set_fill(mirror_img[y][x], opacity=1),
                     run_time=0.7,
                 )
                 self.wait(0.2)
@@ -259,7 +285,7 @@ class PositionsFilter(Scene):
             else:
                 self.play(Create(arrow), run_time=0.4)
                 self.play(
-                    dst.animate.set_fill(SAMPLE_IMG[y][x], opacity=1),
+                    dst.animate.set_fill(mirror_img[y][x], opacity=1),
                     run_time=0.4,
                 )
                 self.play(FadeOut(arrow), run_time=0.25)
