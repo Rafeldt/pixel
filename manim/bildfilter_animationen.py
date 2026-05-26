@@ -190,24 +190,34 @@ class PixelFilter(Scene):
         self.play(FadeOut(cursor), FadeOut(pixel_label), run_time=0.8)
         self.wait(0.4)
 
-        # --- Pseudocode block ---------------------------------------
-        # Shift grids up so pseudocode below has room
+        # --- Full kein_rot code (matches vorlagen.ipynb) -------------
+        # Shift grids up to make room.
         self.play(
-            original.animate.shift(UP * 0.4),
-            lbl_in.animate.shift(UP * 0.4),
-            new.animate.shift(UP * 0.4),
-            lbl_out.animate.shift(UP * 0.4),
-            run_time=0.8,
+            original.animate.shift(UP * 1.0).scale(0.8),
+            lbl_in.animate.shift(UP * 1.0).scale(0.85),
+            new.animate.shift(UP * 1.0).scale(0.8),
+            lbl_out.animate.shift(UP * 1.0).scale(0.85),
+            run_time=1.0,
         )
 
-        block = VGroup(
-            code_line("für jede Zeile y des Bildes:"),
-            code_line("    für jede Spalte x:"),
-            code_line("        r, g, b = bild[y][x]"),
-            code_line("        neues_bild[y][x] = (0, g, b)"),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).to_edge(DOWN, buff=0.5)
+        def mono(text, color=INK, size=18):
+            return Text(text, color=color, font="JetBrains Mono",
+                        font_size=size)
 
-        self.play(Write(block), run_time=2.5)
+        block = VGroup(
+            mono("def kein_rot(bild):", color=MNG_BLUE_DARK),
+            mono("    neues_bild = []"),
+            mono("    for y, zeile in enumerate(bild):"),
+            mono("        neue_zeile = []"),
+            mono("        for x, pixel in enumerate(zeile):"),
+            mono("            r, g, b = pixel"),
+            mono("            neue_zeile.append((0, g, b))",
+                 color=CINNABAR),
+            mono("        neues_bild.append(neue_zeile)"),
+            mono("    return neues_bild"),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.10).to_edge(DOWN, buff=0.4)
+
+        self.play(Write(block), run_time=3.0)
         self.wait(4.0)
 
 
@@ -242,24 +252,62 @@ class PositionsFilter(Scene):
         lbl_out = label("neues_bild", color=CINNABAR)\
             .next_to(new, UP, buff=0.25)
 
+        # Move grids up a bit so code fits below them.
+        original.shift(UP * 1.1).scale(0.78)
+        new.shift(UP * 1.1).scale(0.78)
+        lbl_in.next_to(original, UP, buff=0.2).scale(0.9)
+        lbl_out.next_to(new, UP, buff=0.2).scale(0.9)
+
+        def mono(text, color=INK, size=18):
+            return Text(text, color=color, font="JetBrains Mono",
+                        font_size=size)
+
         # --- Step 1: empty image ------------------------------------
-        note1 = label("Schritt 1: leeres Bild anlegen (alles schwarz)",
-                      color=INK_SOFT, size=22).to_edge(DOWN, buff=0.7)
+        note1 = label("Schritt 1: leeres Bild anlegen",
+                      color=MNG_BLUE_DARK, size=24)
+        note1.to_edge(LEFT, buff=0.6).shift(DOWN * 0.6)
         self.play(FadeIn(original, shift=UP * 0.2),
                   FadeIn(lbl_in, shift=UP * 0.2), run_time=1.0)
-        self.wait(0.8)
+        self.wait(0.6)
         self.play(FadeIn(new, shift=UP * 0.2),
-                  FadeIn(lbl_out, shift=UP * 0.2),
-                  Write(note1), run_time=1.2)
-        self.wait(2.0)
+                  FadeIn(lbl_out, shift=UP * 0.2), run_time=1.0)
+        self.wait(0.4)
+        self.play(Write(note1), run_time=1.0)
+
+        code1 = VGroup(
+            mono("neues_bild = []"),
+            mono("for y in range(hoehe):"),
+            mono("    zeile = []"),
+            mono("    for x in range(breite):"),
+            mono("        zeile.append((0, 0, 0))"),
+            mono("    neues_bild.append(zeile)"),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
+        code1.next_to(note1, DOWN, buff=0.3, aligned_edge=LEFT)
+        self.play(Write(code1), run_time=2.5)
+        self.wait(2.5)
 
         # --- Step 2: per pixel, draw an arrow to the mirrored x -----
-        self.play(FadeOut(note1), run_time=0.6)
-        note2 = label("Schritt 2: jeden Pixel an die "
-                      "gespiegelte Stelle schreiben",
-                      color=INK_SOFT, size=22).to_edge(DOWN, buff=0.7)
-        self.play(FadeIn(note2), run_time=0.8)
-        self.wait(1.2)
+        note2 = label("Schritt 2: Pixel platzieren (gespiegelt)",
+                      color=MNG_BLUE_DARK, size=24)
+        note2.move_to(note1)
+
+        code2 = VGroup(
+            mono("for y in range(hoehe):"),
+            mono("    for x in range(breite):"),
+            mono("        neuer_pixel = bild[y][x]"),
+            mono("        neues_bild[y][breite - 1 - x] \\",
+                 color=CINNABAR),
+            mono("            = neuer_pixel", color=CINNABAR),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
+        code2.next_to(note2, DOWN, buff=0.3, aligned_edge=LEFT)
+
+        self.play(
+            FadeOut(note1),
+            FadeOut(code1),
+            run_time=0.8,
+        )
+        self.play(FadeIn(note2), Write(code2), run_time=2.0)
+        self.wait(1.5)
 
         cols = original.n_cols
 
@@ -301,26 +349,7 @@ class PositionsFilter(Scene):
         for (y, x) in remaining:
             show_mirror(y, x, slow=False)
 
-        self.wait(1.0)
-        self.play(FadeOut(note2), run_time=0.6)
-
-        # Shift up to make room for code block
-        self.play(
-            original.animate.shift(UP * 0.4),
-            lbl_in.animate.shift(UP * 0.4),
-            new.animate.shift(UP * 0.4),
-            lbl_out.animate.shift(UP * 0.4),
-            run_time=0.8,
-        )
-
-        block = VGroup(
-            code_line("für jede Zeile y:"),
-            code_line("    für jede Spalte x:"),
-            code_line("        neues_bild[y][breite - 1 - x]"
-                      " = bild[y][x]"),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).to_edge(DOWN, buff=0.5)
-        self.play(Write(block), run_time=2.5)
-        self.wait(4.0)
+        self.wait(2.0)
 
 
 # =====================================================================
