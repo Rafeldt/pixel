@@ -107,6 +107,47 @@ def code_line(text, color=INK):
     return Text(text, color=color, font="JetBrains Mono", font_size=22)
 
 
+# Approx width of one monospace character (JetBrains Mono) at font_size=1
+_MONO_CHAR_W = 0.0078
+
+
+def mono(text, color=INK, size=18):
+    """Monospace Text with leading-space indentation preserved.
+
+    manim's Text strips/collapses leading whitespace and renders NBSP at
+    zero width with some fonts, so we strip the leading spaces ourselves
+    and apply a manual horizontal shift proportional to the indent level.
+    The shifted-text object remembers its left-of-the-indent anchor at
+    `.left_anchor` for aligned_edge layout.
+    """
+    stripped = text.lstrip(" ")
+    indent = len(text) - len(stripped)
+    t = Text(stripped, color=color, font="JetBrains Mono", font_size=size)
+    if indent:
+        t.shift(RIGHT * indent * _MONO_CHAR_W * size)
+    return t
+
+
+def code_block(lines, color=INK, size=18, line_buff=0.12):
+    """A VGroup of monospace Text lines with proper indentation.
+
+    Lines are arranged DOWN with aligned_edge=LEFT, then each line is
+    shifted right by its indent so the visual indentation is preserved.
+    """
+    items = []
+    indents = []
+    for line in lines:
+        stripped = line.lstrip(" ")
+        indents.append(len(line) - len(stripped))
+        items.append(Text(stripped, color=color,
+                          font="JetBrains Mono", font_size=size))
+    grp = VGroup(*items).arrange(DOWN, aligned_edge=LEFT, buff=line_buff)
+    for t, ind in zip(items, indents):
+        if ind:
+            t.shift(RIGHT * ind * _MONO_CHAR_W * size)
+    return grp
+
+
 # =====================================================================
 # Scene 1 — Pixel-für-Pixel (Vorlage 1)
 # =====================================================================
@@ -200,22 +241,19 @@ class PixelFilter(Scene):
             run_time=1.0,
         )
 
-        def mono(text, color=INK, size=18):
-            return Text(text, color=color, font="JetBrains Mono",
-                        font_size=size)
-
-        block = VGroup(
-            mono("def kein_rot(bild):", color=MNG_BLUE_DARK),
-            mono("    neues_bild = []"),
-            mono("    for y, zeile in enumerate(bild):"),
-            mono("        neue_zeile = []"),
-            mono("        for x, pixel in enumerate(zeile):"),
-            mono("            r, g, b = pixel"),
-            mono("            neue_zeile.append((0, g, b))",
-                 color=CINNABAR),
-            mono("        neues_bild.append(neue_zeile)"),
-            mono("    return neues_bild"),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.10).to_edge(DOWN, buff=0.4)
+        block = code_block([
+            "def kein_rot(bild):",
+            "    neues_bild = []",
+            "    for y, zeile in enumerate(bild):",
+            "        neue_zeile = []",
+            "        for x, pixel in enumerate(zeile):",
+            "            r, g, b = pixel",
+            "            neue_zeile.append((0, g, b))",
+            "        neues_bild.append(neue_zeile)",
+            "    return neues_bild",
+        ], size=18, line_buff=0.10).to_edge(DOWN, buff=0.4)
+        block[0].set_color(MNG_BLUE_DARK)
+        block[6].set_color(CINNABAR)
 
         self.play(Write(block), run_time=3.0)
         self.wait(4.0)
@@ -258,14 +296,11 @@ class PositionsFilter(Scene):
         lbl_in.next_to(original, UP, buff=0.2).scale(0.9)
         lbl_out.next_to(new, UP, buff=0.2).scale(0.9)
 
-        def mono(text, color=INK, size=18):
-            return Text(text, color=color, font="JetBrains Mono",
-                        font_size=size)
-
         # --- Step 1: empty image ------------------------------------
+        # Code panel centered horizontally below the grids (safe x range)
         note1 = label("Schritt 1: leeres Bild anlegen",
                       color=MNG_BLUE_DARK, size=24)
-        note1.to_edge(LEFT, buff=0.6).shift(DOWN * 0.6)
+        note1.move_to([0, -1.0, 0])
         self.play(FadeIn(original, shift=UP * 0.2),
                   FadeIn(lbl_in, shift=UP * 0.2), run_time=1.0)
         self.wait(0.6)
@@ -274,15 +309,15 @@ class PositionsFilter(Scene):
         self.wait(0.4)
         self.play(Write(note1), run_time=1.0)
 
-        code1 = VGroup(
-            mono("neues_bild = []"),
-            mono("for y in range(hoehe):"),
-            mono("    zeile = []"),
-            mono("    for x in range(breite):"),
-            mono("        zeile.append((0, 0, 0))"),
-            mono("    neues_bild.append(zeile)"),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
-        code1.next_to(note1, DOWN, buff=0.3, aligned_edge=LEFT)
+        code1 = code_block([
+            "neues_bild = []",
+            "for y in range(hoehe):",
+            "    zeile = []",
+            "    for x in range(breite):",
+            "        zeile.append((0, 0, 0))",
+            "    neues_bild.append(zeile)",
+        ], size=18, line_buff=0.10)
+        code1.next_to(note1, DOWN, buff=0.3)
         self.play(Write(code1), run_time=2.5)
         self.wait(2.5)
 
@@ -291,15 +326,16 @@ class PositionsFilter(Scene):
                       color=MNG_BLUE_DARK, size=24)
         note2.move_to(note1)
 
-        code2 = VGroup(
-            mono("for y in range(hoehe):"),
-            mono("    for x in range(breite):"),
-            mono("        neuer_pixel = bild[y][x]"),
-            mono("        neues_bild[y][breite - 1 - x] \\",
-                 color=CINNABAR),
-            mono("            = neuer_pixel", color=CINNABAR),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
-        code2.next_to(note2, DOWN, buff=0.3, aligned_edge=LEFT)
+        code2 = code_block([
+            "for y in range(hoehe):",
+            "    for x in range(breite):",
+            "        neuer_pixel = bild[y][x]",
+            "        neues_bild[y][breite - 1 - x] \\",
+            "            = neuer_pixel",
+        ], size=18, line_buff=0.10)
+        code2[3].set_color(CINNABAR)
+        code2[4].set_color(CINNABAR)
+        code2.next_to(note2, DOWN, buff=0.3)
 
         self.play(
             FadeOut(note1),
@@ -480,14 +516,11 @@ class BoxBlur(Scene):
             "für dz in [-1, 0, 1]:",
             "    für ds in [-1, 0, 1]:",
             "        summe += bild[y+dz][x+ds]",
-            "",
             "neu = summe // 9",
         ]
-        loop_block = VGroup(*[
-            Text(c if c else " ", font="JetBrains Mono",
-                 font_size=18, color=INK)
-            for c in loop_lines
-        ]).arrange(DOWN, aligned_edge=LEFT, buff=0.13)
+        loop_block = code_block(loop_lines, size=18, line_buff=0.13)
+        # Visual gap before the last line (the result).
+        loop_block[-1].shift(DOWN * 0.25)
         loop_block.next_to(phase2_label, DOWN, buff=0.35, aligned_edge=LEFT)
         self.play(FadeIn(loop_block, shift=UP * 0.2), run_time=1.5)
         self.wait(2.0)
