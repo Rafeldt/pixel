@@ -202,24 +202,12 @@ TUTORIALS = [
         "subtitle": ("Vom Aufschreiben aller 9 Pixel zur doppelten "
                      "for-Schleife"),
         "video": "BoxBlur.mp4",
-        "duration": "0:58",
+        "duration": "1:00",
         "description": (
             "Wie man den Durchschnitt aller 9 Pixel im 3×3-Fenster "
             "berechnet und das Bild weichzeichnet."
         ),
         "stamps": ["nachbarn"],
-    },
-    {
-        "id": "video-pipeline",
-        "title": "Video filtern: Frame für Frame",
-        "subtitle": "Wie bearbeite_video funktioniert",
-        "video": "VideoPipeline.mp4",
-        "duration": "0:29",
-        "description": (
-            "Wie ein Video Frame für Frame durch einen Filter geschickt "
-            "und wieder zusammengesetzt wird."
-        ),
-        "stamps": [],
     },
 ]
 

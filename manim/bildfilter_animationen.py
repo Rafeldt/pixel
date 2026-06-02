@@ -133,14 +133,24 @@ def code_block(lines, color=INK, size=18, line_buff=0.12):
 
     Lines are arranged DOWN with aligned_edge=LEFT, then each line is
     shifted right by its indent so the visual indentation is preserved.
+    Empty strings render as invisible placeholders so they still
+    occupy a row (creating a blank visual gap).
     """
     items = []
     indents = []
     for line in lines:
         stripped = line.lstrip(" ")
         indents.append(len(line) - len(stripped))
-        items.append(Text(stripped, color=color,
-                          font="JetBrains Mono", font_size=size))
+        if stripped:
+            items.append(Text(stripped, color=color,
+                              font="JetBrains Mono", font_size=size))
+        else:
+            # Invisible placeholder of normal line height — keeps the
+            # vertical gap intact under arrange().
+            ph = Text("x", color=color, font="JetBrains Mono",
+                      font_size=size)
+            ph.set_opacity(0)
+            items.append(ph)
     grp = VGroup(*items).arrange(DOWN, aligned_edge=LEFT, buff=line_buff)
     for t, ind in zip(items, indents):
         if ind:
@@ -395,35 +405,30 @@ class PositionsFilter(Scene):
 # =====================================================================
 
 class BoxBlur(Scene):
-    """Box-Blur in zwei Phasen:
-      Phase 1: alle 9 Pixel von Hand aufgelistet.
-      Phase 2: dasselbe mit einer doppelten for-Schleife über [-1, 0, 1]."""
+    """Box-Blur über RGB-Pixel:
+      Phase 1: zwei Pixel von Hand aufgelistet, mit summe_r / _g / _b.
+      Phase 2: dasselbe mit doppelter for-Schleife über [-1, 0, 1]."""
 
     def construct(self):
         t = title_text("Nachbarn mischen: Box-Blur").to_edge(UP, buff=0.4)
         self.play(Write(t), run_time=1.2)
         self.wait(1.0)
 
-        # --- Grid -----------------------------------------------------
+        # --- RGB grid (random colors with R, G, B in [80, 220]) -----
         rng = np.random.default_rng(7)
-        vals = rng.integers(80, 220, size=(5, 5))
-        gray = [[f"#{v:02x}{v:02x}{v:02x}" for v in row] for row in vals]
-        grid = make_pixel_grid(gray, square_size=0.85)
-        grid.shift(LEFT * 3.4 + DOWN * 0.3)
-
-        nums = VGroup()
-        for y in range(5):
-            for x in range(5):
-                col = WHITE if vals[y, x] < 140 else BLACK
-                t_ = Text(str(int(vals[y, x])), font_size=18, color=col,
-                          weight=BOLD)
-                t_.move_to(grid.cells[y][x].get_center())
-                nums.add(t_)
-        self.play(FadeIn(grid), Write(nums), run_time=1.5)
-        self.wait(1.2)
+        rgb_vals = rng.integers(80, 220, size=(5, 5, 3))
+        rgb_hex = [
+            ["#{:02x}{:02x}{:02x}".format(*rgb_vals[y, x])
+             for x in range(5)]
+            for y in range(5)
+        ]
+        grid = make_pixel_grid(rgb_hex, square_size=0.9)
+        grid.shift(LEFT * 3.3 + DOWN * 0.3)
+        self.play(FadeIn(grid), run_time=1.2)
+        self.wait(1.0)
 
         cy, cx = 2, 2
-        center_box = Square(side_length=0.88, stroke_color=CINNABAR,
+        center_box = Square(side_length=0.93, stroke_color=CINNABAR,
                             stroke_width=6, fill_opacity=0)
         center_box.move_to(grid.cells[cy][cx].get_center())
         center_label = Text("bild[y][x]", font="JetBrains Mono",
@@ -432,98 +437,134 @@ class BoxBlur(Scene):
         self.play(Create(center_box), Write(center_label), run_time=1.2)
         self.wait(1.5)
 
-        # --- PHASE 1: 9 explicit accesses ----------------------------
-        phase_label = label("Phase 1: alle 9 Pixel von Hand",
+        # --- Compute the averaged centre pixel ----------------------
+        nb = rgb_vals[cy - 1:cy + 2, cx - 1:cx + 2]
+        avg_r = int(nb[:, :, 0].mean())
+        avg_g = int(nb[:, :, 1].mean())
+        avg_b = int(nb[:, :, 2].mean())
+        neu_hex = "#{:02x}{:02x}{:02x}".format(avg_r, avg_g, avg_b)
+
+        # --- PHASE 1: explicit example (first two pixels) -----------
+        phase_label = label("Phase 1: jeden Pixel von Hand",
                             color=MNG_BLUE_DARK, size=24)
         phase_label.to_edge(UP, buff=1.2).shift(RIGHT * 3.2)
         self.play(FadeIn(phase_label, shift=LEFT * 0.3), run_time=1.0)
         self.wait(0.8)
 
-        explicit_lines = [
-            "summe  = bild[y-1][x-1]",
-            "summe += bild[y-1][x]",
-            "summe += bild[y-1][x+1]",
-            "summe += bild[y][x-1]",
-            "summe += bild[y][x]",
-            "summe += bild[y][x+1]",
-            "summe += bild[y+1][x-1]",
-            "summe += bild[y+1][x]",
-            "summe += bild[y+1][x+1]",
-        ]
-        explicit_block = VGroup(*[
-            Text(c, font="JetBrains Mono", font_size=16,
-                 color=INK_SOFT)
-            for c in explicit_lines
-        ]).arrange(DOWN, aligned_edge=LEFT, buff=0.10)
-        explicit_block.next_to(phase_label, DOWN, buff=0.35,
+        explicit_block = code_block([
+            "r, g, b = bild[y-1][x-1]",
+            "summe_r = r",
+            "summe_g = g",
+            "summe_b = b",
+            "",
+            "r, g, b = bild[y-1][x]",
+            "summe_r += r",
+            "summe_g += g",
+            "summe_b += b",
+            "",
+            "# ... das gleiche für 7 weitere Pixel",
+            "",
+            "neu = (summe_r // 9,",
+            "       summe_g // 9,",
+            "       summe_b // 9)",
+        ], size=15, line_buff=0.06)
+        explicit_block.next_to(phase_label, DOWN, buff=0.30,
                                aligned_edge=LEFT)
-        self.play(FadeIn(explicit_block, shift=UP * 0.2), run_time=1.2)
+        self.play(FadeIn(explicit_block, shift=UP * 0.2), run_time=1.5)
         self.wait(1.0)
 
+        # First two neighbours: slow, in sync with the visible code blocks
         neighbors = [
             (cy - 1, cx - 1), (cy - 1, cx), (cy - 1, cx + 1),
             (cy,     cx - 1), (cy,     cx), (cy,     cx + 1),
             (cy + 1, cx - 1), (cy + 1, cx), (cy + 1, cx + 1),
         ]
-        for i, (ny, nx) in enumerate(neighbors):
+        code_blocks = [
+            list(range(0, 4)),   # first pixel: lines 0-3
+            list(range(5, 9)),   # second pixel: lines 5-8
+        ]
+        for i in range(2):
+            ny, nx = neighbors[i]
             cell = grid.cells[ny][nx]
-            cline = explicit_block[i]
             self.play(
                 cell.animate.set_stroke(CINNABAR, width=5),
-                cline.animate.set_color(INK).set_opacity(1.0),
-                run_time=0.55,
+                *[explicit_block[j].animate.set_color(INK)
+                  for j in code_blocks[i]],
+                run_time=0.7,
             )
-            self.wait(0.35)
+            self.wait(0.5)
+            self.play(cell.animate.set_stroke(WHITE, width=2),
+                      run_time=0.25)
+
+        # Remaining 7 cells: quick sweep while the "..." line is highlighted
+        ellipsis_line = explicit_block[10]
+        self.play(ellipsis_line.animate.set_color(CINNABAR), run_time=0.4)
+        for i in range(2, 9):
+            ny, nx = neighbors[i]
+            cell = grid.cells[ny][nx]
             self.play(
-                cell.animate.set_stroke(WHITE, width=2),
-                run_time=0.25,
+                cell.animate.set_stroke(CINNABAR, width=5),
+                run_time=0.30,
             )
+            self.play(cell.animate.set_stroke(WHITE, width=2),
+                      run_time=0.20)
+        self.play(ellipsis_line.animate.set_color(INK_SOFT), run_time=0.4)
 
-        self.wait(0.6)
-
-        center_val = int(vals[cy - 1:cy + 2, cx - 1:cx + 2].mean())
-        result_line = Text(f"neu = summe // 9 = {center_val}",
-                           font="JetBrains Mono", font_size=18,
-                           color=MNG_BLUE_DARK, weight=BOLD)
-        result_line.next_to(explicit_block, DOWN, buff=0.35,
-                            aligned_edge=LEFT)
-        self.play(Write(result_line), run_time=1.5)
+        # Highlight the result lines + show the new colour right inside
+        # the centre cell (the box-blur output) without leaving the
+        # screen.
+        original_centre_color = rgb_hex[cy][cx]
+        self.play(
+            explicit_block[12].animate.set_color(MNG_BLUE_DARK),
+            explicit_block[13].animate.set_color(MNG_BLUE_DARK),
+            explicit_block[14].animate.set_color(MNG_BLUE_DARK),
+            grid.cells[cy][cx].animate.set_fill(neu_hex, opacity=1),
+            run_time=1.0,
+        )
         self.wait(2.5)
 
-        # --- Transition -----------------------------------------------
+        # --- Transition ---------------------------------------------
         transition = label("Geht das kürzer?",
                            color=CINNABAR, size=28)
         transition.to_edge(DOWN, buff=0.6)
         self.play(Write(transition), run_time=1.2)
-        self.wait(2.5)
+        self.wait(2.0)
 
         self.play(
             FadeOut(phase_label),
             FadeOut(explicit_block),
-            FadeOut(result_line),
             FadeOut(transition),
+            # Reset the centre cell so Phase 2 demonstrates it again.
+            grid.cells[cy][cx].animate.set_fill(original_centre_color,
+                                                opacity=1),
             run_time=1.0,
         )
         self.wait(0.5)
 
-        # --- PHASE 2: double for-loop --------------------------------
+        # --- PHASE 2: double for-loop -------------------------------
         phase2_label = label("Phase 2: doppelte for-Schleife",
                              color=MNG_BLUE_DARK, size=24)
         phase2_label.to_edge(UP, buff=1.2).shift(RIGHT * 3.2)
         self.play(FadeIn(phase2_label, shift=LEFT * 0.3), run_time=1.0)
         self.wait(0.5)
 
-        loop_lines = [
-            "summe = 0",
+        loop_block = code_block([
+            "summe_r = 0",
+            "summe_g = 0",
+            "summe_b = 0",
+            "",
             "für dz in [-1, 0, 1]:",
             "    für ds in [-1, 0, 1]:",
-            "        summe += bild[y+dz][x+ds]",
-            "neu = summe // 9",
-        ]
-        loop_block = code_block(loop_lines, size=18, line_buff=0.13)
-        # Visual gap before the last line (the result).
-        loop_block[-1].shift(DOWN * 0.25)
-        loop_block.next_to(phase2_label, DOWN, buff=0.35, aligned_edge=LEFT)
+            "        r, g, b = bild[y+dz][x+ds]",
+            "        summe_r += r",
+            "        summe_g += g",
+            "        summe_b += b",
+            "",
+            "neu = (summe_r // 9,",
+            "       summe_g // 9,",
+            "       summe_b // 9)",
+        ], size=15, line_buff=0.08)
+        loop_block.next_to(phase2_label, DOWN, buff=0.30, aligned_edge=LEFT)
         self.play(FadeIn(loop_block, shift=UP * 0.2), run_time=1.5)
         self.wait(2.0)
 
@@ -534,7 +575,7 @@ class BoxBlur(Scene):
                           font_size=20, color=CINNABAR)
         tracker = VGroup(dz_tracker, ds_tracker)\
             .arrange(DOWN, aligned_edge=LEFT, buff=0.15)
-        tracker.next_to(loop_block, DOWN, buff=0.5, aligned_edge=LEFT)
+        tracker.next_to(loop_block, DOWN, buff=0.35, aligned_edge=LEFT)
         self.play(FadeIn(tracker), run_time=0.8)
         self.wait(0.6)
 
@@ -567,14 +608,14 @@ class BoxBlur(Scene):
 
         self.wait(0.8)
 
-        result_line2 = Text(f"neu = {center_val}",
-                            font="JetBrains Mono", font_size=22,
-                            color=MNG_BLUE_DARK, weight=BOLD)
-        result_line2.next_to(tracker, DOWN, buff=0.4, aligned_edge=LEFT)
-        self.play(Write(result_line2), run_time=1.2)
-        self.wait(1.2)
+        # Same result: animate the centre cell to the blurred colour.
+        self.play(
+            grid.cells[cy][cx].animate.set_fill(neu_hex, opacity=1),
+            run_time=1.0,
+        )
+        self.wait(1.5)
 
-        msg = label("Gleicher Wert, viel weniger Code.",
+        msg = label("Gleiches Ergebnis, viel weniger Code.",
                     color=CINNABAR, size=26)
         msg.to_edge(DOWN, buff=0.4)
         self.play(Write(msg), run_time=1.5)
