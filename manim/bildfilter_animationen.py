@@ -32,8 +32,8 @@ config.background_color = PAPER
 # Sample 4x6 image (rows x cols)
 SAMPLE_IMG = [
     ["#FFD89B", "#FFD89B", "#FFC93C", "#FFC93C", "#FFD89B", "#FFD89B"],
-    ["#FFD89B", "#FFE8C8", "#FFFFFF", "#FFFFFF", "#FFD89B", "#FFD89B"],
-    ["#9AAEC8", "#9AAEC8", "#FFFFFF", "#FFFFFF", "#6E83A3", "#6E83A3"],
+    ["#FFD89B", "#FFE8C8", "#FFD580", "#FFD580", "#FFD89B", "#FFD89B"],
+    ["#9AAEC8", "#9AAEC8", "#BDC8DE", "#BDC8DE", "#6E83A3", "#6E83A3"],
     ["#5C7B4F", "#5C7B4F", "#6E8B5A", "#6E8B5A", "#4A7BA0", "#4A7BA0"],
 ]
 
@@ -243,17 +243,19 @@ class PixelFilter(Scene):
 
         block = code_block([
             "def kein_rot(bild):",
+            "    hoehe = len(bild)",
+            "    breite = len(bild[0])",
             "    neues_bild = []",
-            "    for y, zeile in enumerate(bild):",
+            "    for y in range(hoehe):",
             "        neue_zeile = []",
-            "        for x, pixel in enumerate(zeile):",
-            "            r, g, b = pixel",
+            "        for x in range(breite):",
+            "            r, g, b = bild[y][x]",
             "            neue_zeile.append((0, g, b))",
             "        neues_bild.append(neue_zeile)",
             "    return neues_bild",
-        ], size=18, line_buff=0.10).to_edge(DOWN, buff=0.4)
+        ], size=16, line_buff=0.08).to_edge(DOWN, buff=0.4)
         block[0].set_color(MNG_BLUE_DARK)
-        block[6].set_color(CINNABAR)
+        block[8].set_color(CINNABAR)
 
         self.play(Write(block), run_time=3.0)
         self.wait(4.0)
