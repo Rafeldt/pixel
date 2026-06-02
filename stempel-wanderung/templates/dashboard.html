@@ -47,6 +47,7 @@
       {% for stamp in stamps %}
         {% set is_claimed = stamp.id in claimed_set %}
         {% set is_ready = stamp.id in ready_set %}
+        {% set tut = tutorial_by_stamp[stamp.id] %}
         <div id="stamp-{{ stamp.id }}"
              class="stamp{% if is_claimed %} claimed{% elif is_ready %} ready{% endif %}">
           <span class="station-num">Station {{ stamp.station }}</span>
@@ -54,6 +55,12 @@
           <div class="stamp-subtitle">{{ stamp.subtitle }}</div>
           <div class="stamp-req">{{ stamp.requirement }}</div>
           <div class="stamp-chapter">{{ stamp.chapter }}</div>
+          {% if tut %}
+            <a class="tutorial-link"
+               href="{{ url_for('tutorials') }}#{{ tut.id }}">
+              ▶ Tutorial: {{ tut.title }}
+            </a>
+          {% endif %}
           {% if not is_claimed %}
             <form class="ready-form" method="post"
                   action="{{ url_for('student_ready') }}">

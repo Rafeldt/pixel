@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Video-Tutorials{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Video-Tutorials</h2>
+  <p class="hint">
+    Kurze Erklärvideos zu den wichtigsten Konzepten des Projekts.
+    Schau dir das passende Tutorial an, bevor du eine Station angehst.
+  </p>
+</section>
+
+<div class="tutorial-grid">
+  {% for t in tutorials %}
+    <article id="{{ t.id }}" class="tutorial-card">
+      <div class="tutorial-video">
+        <video controls preload="metadata" playsinline
+               src="{{ url_for('static', filename='tutorials/' + t.video) }}">
+          Dein Browser kann dieses Video nicht abspielen.
+        </video>
+      </div>
+      <div class="tutorial-meta">
+        <h3>{{ t.title }}</h3>
+        <p class="tutorial-subtitle">{{ t.subtitle }}</p>
+        <p class="tutorial-description">{{ t.description }}</p>
+        <p class="tutorial-duration">Dauer: {{ t.duration }}</p>
+        {% if t.stamps %}
+          <p class="tutorial-related">
+            Hilft bei:
+            {% for stamp_id in t.stamps %}
+              {% set s = stamps_by_id[stamp_id] %}
+              <a href="{{ url_for('dashboard') }}#stamp-{{ s.id }}">{{ s.title }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        {% else %}
+          <p class="tutorial-related">Bonus für eigene Experimente.</p>
+        {% endif %}
+      </div>
+    </article>
+  {% endfor %}
+</div>
+{% endblock %}

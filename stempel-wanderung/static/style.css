@@ -289,6 +289,85 @@ main.container { padding-top: 28px; padding-bottom: 60px; }
   letter-spacing: 0.5px;
 }
 
+/* ---- Tutorial link on a stamp card ---- */
+a.tutorial-link {
+  display: inline-block;
+  margin: 10px 0 0 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mng-blue-dark);
+  background: var(--mng-blue-light);
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background 150ms;
+}
+a.tutorial-link:hover { background: var(--mng-blue); color: white; }
+
+/* ---- Tutorials page grid ---- */
+.tutorial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 22px;
+  margin-top: 22px;
+}
+.tutorial-card {
+  background: white;
+  border: 1px solid var(--paper-dark);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.tutorial-video {
+  background: black;
+  aspect-ratio: 16 / 9;
+}
+.tutorial-video video {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.tutorial-meta {
+  padding: 16px 18px 20px;
+}
+.tutorial-meta h3 {
+  margin: 0 0 4px 0;
+  color: var(--mng-blue-dark);
+  font-size: 18px;
+}
+.tutorial-subtitle {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.tutorial-description {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.tutorial-duration {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tutorial-related {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.tutorial-related a {
+  color: var(--cinnabar);
+  text-decoration: none;
+  font-weight: 600;
+}
+.tutorial-related a:hover { text-decoration: underline; }
+
 /* ---- Student self-mark "Bereit zur Bewertung" button ---- */
 .stamp.ready {
   border: 1.5px solid #9CA3AF;

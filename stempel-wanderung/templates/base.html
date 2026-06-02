@@ -12,9 +12,11 @@
       <h1><a href="{{ url_for('index') }}">Bildfilter Stempel-Wanderung</a></h1>
       <nav>
         {% if session.username %}
+          <a href="{{ url_for('tutorials') }}">Tutorials</a>
           <span class="username">{{ session.username }}</span>
           <a href="{{ url_for('logout') }}">Abmelden</a>
         {% elif session.teacher %}
+          <a href="{{ url_for('tutorials') }}">Tutorials</a>
           <span class="username">Lehrperson</span>
           <a href="{{ url_for('teacher_logout') }}">Abmelden</a>
         {% else %}

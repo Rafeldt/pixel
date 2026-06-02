@@ -159,3 +159,74 @@ def get_stamp_by_code(code):
         if s["code"].lower() == code:
             return s
     return None
+
+
+# ============================================================
+# Video tutorials (manim renders)
+# Each tutorial is linked to one or more stamp IDs so the
+# dashboard can show a "Tutorial ansehen" link on the relevant
+# cards.
+# ============================================================
+
+TUTORIALS = [
+    {
+        "id": "pixel-filter",
+        "title": "Vorlage 1: Pixel für Pixel",
+        "subtitle": "Beispiel: kein_rot",
+        "video": "PixelFilter.mp4",
+        "duration": "0:37",
+        "description": (
+            "Wie man jeden Pixel einzeln umrechnet. Ideal für alle Filter, "
+            "bei denen der neue Pixel nur vom gleichen Pixel im "
+            "Originalbild abhängt."
+        ),
+        "stamps": ["kein-rot", "invert", "graustufen", "helligkeit",
+                   "schwellwert"],
+    },
+    {
+        "id": "positions-filter",
+        "title": "Vorlage 2: Position frei wählen",
+        "subtitle": "Beispiel: Bild horizontal spiegeln",
+        "video": "PositionsFilter.mp4",
+        "duration": "0:48",
+        "description": (
+            "Erst ein leeres Bild anlegen, dann jeden Pixel an eine "
+            "gewünschte Position schreiben. Ideal für Spiegeln, Drehen, "
+            "Verpixeln."
+        ),
+        "stamps": ["spiegelei"],
+    },
+    {
+        "id": "box-blur",
+        "title": "Box-Blur: 3×3 Nachbarschaft",
+        "subtitle": ("Vom Aufschreiben aller 9 Pixel zur doppelten "
+                     "for-Schleife"),
+        "video": "BoxBlur.mp4",
+        "duration": "0:58",
+        "description": (
+            "Wie man den Durchschnitt aller 9 Pixel im 3×3-Fenster "
+            "berechnet und das Bild weichzeichnet."
+        ),
+        "stamps": ["nachbarn"],
+    },
+    {
+        "id": "video-pipeline",
+        "title": "Video filtern: Frame für Frame",
+        "subtitle": "Wie bearbeite_video funktioniert",
+        "video": "VideoPipeline.mp4",
+        "duration": "0:29",
+        "description": (
+            "Wie ein Video Frame für Frame durch einen Filter geschickt "
+            "und wieder zusammengesetzt wird."
+        ),
+        "stamps": [],
+    },
+]
+
+
+def tutorial_for_stamp(stamp_id):
+    """Return the first tutorial whose stamps list contains stamp_id."""
+    for t in TUTORIALS:
+        if stamp_id in t.get("stamps", []):
+            return t
+    return None

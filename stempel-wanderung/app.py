@@ -23,7 +23,7 @@ from flask import (Flask, abort, flash, redirect, render_template, request,
                    session, url_for)
 from werkzeug.security import check_password_hash
 
-from stamps import STAMPS, get_stamp_by_id
+from stamps import STAMPS, TUTORIALS, get_stamp_by_id, tutorial_for_stamp
 
 DB_PATH = Path(__file__).parent / "data" / "progress.db"
 
@@ -152,6 +152,8 @@ def dashboard():
         ).fetchall()
     claimed_ids = [r["stamp_id"] for r in claimed_rows]
     ready_set = {r["stamp_id"] for r in ready_rows}
+    # Map stamp_id -> tutorial dict (or None) for the dashboard cards.
+    tutorial_by_stamp = {s["id"]: tutorial_for_stamp(s["id"]) for s in STAMPS}
     return render_template(
         "dashboard.html",
         username=username,
@@ -160,6 +162,19 @@ def dashboard():
         claimed_ids=claimed_ids,
         claimed_set=set(claimed_ids),
         ready_set=ready_set,
+        tutorial_by_stamp=tutorial_by_stamp,
+    )
+
+
+@app.route("/tutorials")
+def tutorials():
+    if "username" not in session and not session.get("teacher"):
+        return redirect(url_for("index"))
+    stamps_by_id = {s["id"]: s for s in STAMPS}
+    return render_template(
+        "tutorials.html",
+        tutorials=TUTORIALS,
+        stamps_by_id=stamps_by_id,
     )
 
 

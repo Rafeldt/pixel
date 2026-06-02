@@ -1,8 +1,6 @@
 """Generate a printable login-cards PDF from credentials.csv.
 
-Usage:
-    python generate_login_cards.py            # default URL
-    python generate_login_cards.py http://10.0.0.5:5000
+Each card shows only the username, password, and the site URL.
 
 Run import_students.py first to produce credentials.csv.
 """
@@ -12,27 +10,25 @@ from pathlib import Path
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 HERE = Path(__file__).parent
 CREDENTIALS_CSV = HERE / "credentials.csv"
 OUTPUT_PDF = HERE / "login_cards.pdf"
 
-# Card layout: 2 columns x 4 rows = 8 cards per A4 page
+SITE_URL = "pixel.rafeldt.ch"
+
 COLS = 2
 ROWS = 4
 MARGIN_X = 15 * mm
 MARGIN_Y = 15 * mm
 SPACING = 4 * mm
 
-# MNG Blau ZH (matches the website + the skripts)
 MNG_BLUE = (0 / 255, 118 / 255, 189 / 255)
 CINNABAR = (177 / 255, 56 / 255, 46 / 255)
 
 
-def main(default_url: str) -> None:
+def main() -> None:
     if not CREDENTIALS_CSV.exists():
         print(f"ERROR: {CREDENTIALS_CSV.name} not found. "
               f"Run import_students.py first.")
@@ -59,53 +55,35 @@ def main(default_url: str) -> None:
         x = MARGIN_X + col * (card_w + SPACING)
         y = page_h - MARGIN_Y - (row + 1) * card_h - row * SPACING
 
-        # --- Card frame ---
         c.setStrokeColorRGB(*MNG_BLUE)
         c.setLineWidth(0.8)
         c.roundRect(x, y, card_w, card_h, 4 * mm, stroke=1, fill=0)
 
-        # --- Top accent bar ---
+        # URL at top
+        c.setFont("Helvetica-Bold", 14)
         c.setFillColorRGB(*MNG_BLUE)
-        c.rect(x, y + card_h - 18 * mm, card_w, 18 * mm, stroke=0, fill=1)
+        c.drawCentredString(x + card_w / 2, y + card_h - 12 * mm, SITE_URL)
 
-        # --- Title (in accent bar) ---
-        c.setFillColorRGB(1, 1, 1)
-        c.setFont("Helvetica-Bold", 13)
-        c.drawString(x + 6 * mm, y + card_h - 9 * mm,
-                     "Bildfilter — Stempel-Wanderung")
-        c.setFont("Helvetica", 9)
-        c.drawString(x + 6 * mm, y + card_h - 14.5 * mm,
-                     "Klasse 1f  ·  Informatik")
-
-        # --- Student name ---
-        c.setFillColorRGB(0, 0, 0)
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(x + 6 * mm, y + card_h - 26 * mm,
-                     student["display_name"])
-
-        # --- Credentials block ---
+        # Username
         c.setFont("Helvetica", 9)
         c.setFillColorRGB(0.4, 0.4, 0.4)
-        c.drawString(x + 6 * mm, y + card_h - 36 * mm, "Benutzername")
-        c.drawString(x + 6 * mm, y + card_h - 49 * mm, "Passwort")
-
+        c.drawString(x + 8 * mm, y + card_h - 24 * mm, "Benutzername")
         c.setFont("Courier-Bold", 16)
         c.setFillColorRGB(*MNG_BLUE)
-        c.drawString(x + 6 * mm, y + card_h - 42 * mm, student["username"])
-        c.setFillColorRGB(*CINNABAR)
-        c.drawString(x + 6 * mm, y + card_h - 55 * mm, student["password"])
+        c.drawString(x + 8 * mm, y + card_h - 31 * mm, student["username"])
 
-        # --- URL footer ---
-        c.setFont("Helvetica-Oblique", 8)
-        c.setFillColorRGB(0.3, 0.3, 0.3)
-        c.drawString(x + 6 * mm, y + 5 * mm, f"Adresse: {default_url}")
+        # Password
+        c.setFont("Helvetica", 9)
+        c.setFillColorRGB(0.4, 0.4, 0.4)
+        c.drawString(x + 8 * mm, y + card_h - 41 * mm, "Passwort")
+        c.setFont("Courier-Bold", 16)
+        c.setFillColorRGB(*CINNABAR)
+        c.drawString(x + 8 * mm, y + card_h - 48 * mm, student["password"])
 
     c.save()
     print(f"Created {OUTPUT_PDF.name} with {len(students)} cards "
           f"on {(len(students) + COLS*ROWS - 1) // (COLS*ROWS)} pages.")
-    print(f"   URL printed on cards: {default_url}")
 
 
 if __name__ == "__main__":
-    url = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:5000"
-    main(url)
+    main()
