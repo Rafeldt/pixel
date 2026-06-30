@@ -185,7 +185,8 @@
           "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 7,
+      "desc": "Benachbarte Pixel paarweise vertauscht"
     },
     {
       "id": "projekt-02",
@@ -262,7 +263,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Strudel-Verzerrung (Swirl)"
     },
     {
       "id": "projekt-03",
@@ -339,7 +341,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Invertiert, weichgezeichnet & Farbkanaele getauscht"
     },
     {
       "id": "projekt-04",
@@ -416,7 +419,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Invertiert und mit Sinuswellen verschoben"
     },
     {
       "id": "projekt-05",
@@ -486,7 +490,8 @@
           "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 7,
+      "desc": "Halbtransparentes Wasserzeichen ueberlagert"
     },
     {
       "id": "projekt-06",
@@ -549,7 +554,8 @@
           "eigener"
         ]
       },
-      "n_filters": 6
+      "n_filters": 6,
+      "desc": "Kaestchen-Mosaik mit abwechselnder Invertierung"
     },
     {
       "id": "projekt-07",
@@ -624,7 +630,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Pink-violette Farbverschiebung"
     },
     {
       "id": "projekt-08",
@@ -701,7 +708,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Gespiegelt und mit Sinuswellen verzerrt"
     },
     {
       "id": "projekt-09",
@@ -778,7 +786,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Aufgehellt und auf wenige Farben posterisiert"
     },
     {
       "id": "projekt-10",
@@ -855,7 +864,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "RGB-Glitch (Farbkanaele horizontal verschoben)"
     },
     {
       "id": "projekt-11",
@@ -925,7 +935,8 @@
           "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 7,
+      "desc": "Staerkste Farbe pro Pixel verstaerkt"
     },
     {
       "id": "projekt-12",
@@ -1002,7 +1013,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Sepiabild im Kamera-Rahmen (Greenscreen)"
     },
     {
       "id": "projekt-13",
@@ -1079,7 +1091,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Weichgezeichnet mit Sepia-Ton"
     },
     {
       "id": "projekt-14",
@@ -1156,7 +1169,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Vignette (Raender abgedunkelt)"
     },
     {
       "id": "projekt-15",
@@ -1233,7 +1247,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "CRT-Monitor-Effekt (Subpixel-Raster)"
     },
     {
       "id": "projekt-16",
@@ -1310,7 +1325,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Verkleinert und grell pink-weiss eingefaerbt"
     },
     {
       "id": "projekt-17",
@@ -1387,7 +1403,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Zeilenweise nach Rotwert sortierte Pixel"
     },
     {
       "id": "projekt-18",
@@ -1464,7 +1481,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Gekippt und violett eingefaerbt"
     },
     {
       "id": "projekt-19",
@@ -1534,7 +1552,8 @@
           "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 7,
+      "desc": "Sinuswellen mit Spiegelung"
     },
     {
       "id": "projekt-20",
@@ -1611,7 +1630,8 @@
           "eigener"
         ]
       },
-      "n_filters": 8
+      "n_filters": 8,
+      "desc": "Kantenerkennung (Umrisse)"
     },
     {
       "id": "projekt-21",
@@ -1681,7 +1701,8 @@
           "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 7,
+      "desc": "Weichgezeichnet, auf 125 Farben reduziert & verrauscht (Fuzzy)"
     }
   ]
 }

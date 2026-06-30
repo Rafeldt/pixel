@@ -53,6 +53,32 @@ TEAMS = {
 }
 DROP_FOLDERS = {"lasse"}           # teammate folders represented by another folder
 
+# Short German description of each group's Station-9 (eigener) filter, keyed by
+# submission folder (stable across the anonymised Projekt-NN renumbering).
+EIGENER_DESC = {
+    "kira": "Benachbarte Pixel paarweise vertauscht",
+    "nias": "Strudel-Verzerrung (Swirl)",
+    "jakob": "Invertiert, weichgezeichnet & Farbkanaele getauscht",
+    "miron": "Invertiert und mit Sinuswellen verschoben",
+    "tore": "Halbtransparentes Wasserzeichen ueberlagert",
+    "vivienne": "Kaestchen-Mosaik mit abwechselnder Invertierung",
+    "jelena": "Pink-violette Farbverschiebung",
+    "konstantin": "Gespiegelt und mit Sinuswellen verzerrt",
+    "jacqueline": "Aufgehellt und auf wenige Farben posterisiert",
+    "marta": "RGB-Glitch (Farbkanaele horizontal verschoben)",
+    "jascha": "Staerkste Farbe pro Pixel verstaerkt",
+    "ella": "Sepiabild im Kamera-Rahmen (Greenscreen)",
+    "giulia": "Weichgezeichnet mit Sepia-Ton",
+    "rose": "Vignette (Raender abgedunkelt)",
+    "nicolas": "CRT-Monitor-Effekt (Subpixel-Raster)",
+    "loriana": "Verkleinert und grell pink-weiss eingefaerbt",
+    "fiona": "Zeilenweise nach Rotwert sortierte Pixel",
+    "sofia": "Gekippt und violett eingefaerbt",
+    "mika": "Sinuswellen mit Spiegelung",
+    "miya": "Kantenerkennung (Umrisse)",
+    "michael": "Weichgezeichnet, auf 125 Farben reduziert & verrauscht (Fuzzy)",
+}
+
 
 # --------------------------------------------------------------- pixel helpers
 def _c(v) -> int:
@@ -719,7 +745,8 @@ def main() -> int:
         pid = f"projekt-{i:02d}"
         label = f"Projekt {i:02d}"
         chosen = choose_notebook(folder)
-        proj = {"id": pid, "label": label, "outputs": {}, "n_filters": 0}
+        proj = {"id": pid, "label": label, "outputs": {}, "n_filters": 0,
+                "desc": EIGENER_DESC.get(folder.name, "")}
         if chosen is None or chosen[3] == 0:
             where = chosen[0].name if chosen else "-"
             print(f"  {pid}: NO WORKING NOTEBOOK ({folder.name}, tried {where})")

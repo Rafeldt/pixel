@@ -64,7 +64,7 @@
     {% for p in projects %}
       {% set done = p.outputs.get(selected.id, []) %}
       <article class="proj-card" id="{{ p.id }}">
-        <header class="proj-head"><h3>{{ p.label }}</h3>
+        <header class="proj-head"><div class="proj-title"><h3>{{ p.label }}</h3>{% if p.desc %}<span class="proj-desc">{{ p.desc }}</span>{% endif %}</div>
           <span class="proj-badge">{{ done|length }} Filter</span></header>
         {% if done %}
         <div class="filmstrip">
@@ -123,7 +123,7 @@
       {% for p in projects|sort(attribute='id') %}
         {% set t = totals.get(p.id, {}) %}
         <article class="proj-card" id="{{ p.id }}">
-          <header class="proj-head"><h3>{{ p.label }}</h3>
+          <header class="proj-head"><div class="proj-title"><h3>{{ p.label }}</h3>{% if p.desc %}<span class="proj-desc">{{ p.desc }}</span>{% endif %}</div>
             <span class="proj-badge vote-total">{{ t.points or 0 }} Punkte &middot; {{ t.voters or 0 }} Stimmen</span></header>
           {{ eigener_strip(p) }}
         </article>
@@ -136,7 +136,7 @@
       <div class="proj-grid">
         {% for p in projects %}
           <article class="proj-card" id="{{ p.id }}">
-            <header class="proj-head"><h3>{{ p.label }}</h3>
+            <header class="proj-head"><div class="proj-title"><h3>{{ p.label }}</h3>{% if p.desc %}<span class="proj-desc">{{ p.desc }}</span>{% endif %}</div>
               <label class="vote-label">Punkte
                 <input class="vote-input" type="number" name="points-{{ p.id }}"
                        min="0" max="{{ vote_budget }}" step="1"
