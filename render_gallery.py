@@ -358,9 +358,9 @@ ASSET_RE = re.compile(r'rahmen|frame|kamera|camera|watermark|wasserzeichen|'
 EIGENER_OVERRIDES = {
     "marta": dict(expr="rgb_glitch(bild, 8)"),        # interactive widget, no save
     "nicolas": dict(expr="box_crt(bild)"),            # invocation left commented out
-    # green-screen camera-frame collage: only meaningful composited into her
-    # real Nikon frame, on her own photo (both pulled from JupyterHub).
-    "ella": dict(own_image="_jupyterhub/dein_foto.jpg"),
+    # Ella's green-screen collage runs per source image: each example picture is
+    # sepia-toned, shrunk and composited into her real Nikon frame (loaded as a
+    # chroma-key asset). No override needed — the frame matches ASSET_RE.
     # her final filter lives in a separate notebook and 10x-upscales each pixel
     # into an alternating-invert box; feed a small base so the boxes stay visible.
     "vivienne": dict(nb="eigener_filter_code", base_width=24),
