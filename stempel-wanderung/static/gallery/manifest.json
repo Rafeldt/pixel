@@ -1,0 +1,1023 @@
+{
+  "width": 240,
+  "sources": [
+    {
+      "id": "fuji",
+      "label": "Foto (Fuji)",
+      "file": "sources/fuji.png",
+      "size": [
+        240,
+        170
+      ]
+    },
+    {
+      "id": "gemalt",
+      "label": "Gemalt (Fuji)",
+      "file": "sources/gemalt.png",
+      "size": [
+        240,
+        170
+      ]
+    },
+    {
+      "id": "palette",
+      "label": "Farbpalette",
+      "file": "sources/palette.png",
+      "size": [
+        240,
+        180
+      ]
+    },
+    {
+      "id": "spektrum",
+      "label": "Farbspektrum",
+      "file": "sources/spektrum.png",
+      "size": [
+        240,
+        149
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "kein_rot",
+      "label": "Kein Rot",
+      "station": 2
+    },
+    {
+      "id": "invertieren",
+      "label": "Invertiert",
+      "station": 3
+    },
+    {
+      "id": "graustufen",
+      "label": "Graustufen",
+      "station": 4
+    },
+    {
+      "id": "helligkeit",
+      "label": "Heller (+50)",
+      "station": 5
+    },
+    {
+      "id": "schwellwert",
+      "label": "Schwellwert",
+      "station": 6
+    },
+    {
+      "id": "box_blur",
+      "label": "Weichzeichnen",
+      "station": 7
+    },
+    {
+      "id": "spiegeln",
+      "label": "Gespiegelt",
+      "station": 8
+    },
+    {
+      "id": "eigener",
+      "label": "Eigener Filter",
+      "station": 9
+    }
+  ],
+  "projects": [
+    {
+      "id": "projekt-01",
+      "label": "Projekt 01",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-02",
+      "label": "Projekt 02",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-03",
+      "label": "Projekt 03",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-04",
+      "label": "Projekt 04",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 6
+    },
+    {
+      "id": "projekt-05",
+      "label": "Projekt 05",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-06",
+      "label": "Projekt 06",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 6
+    },
+    {
+      "id": "projekt-07",
+      "label": "Projekt 07",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-08",
+      "label": "Projekt 08",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur"
+        ]
+      },
+      "n_filters": 6
+    },
+    {
+      "id": "projekt-09",
+      "label": "Projekt 09",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-10",
+      "label": "Projekt 10",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-11",
+      "label": "Projekt 11",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 5
+    },
+    {
+      "id": "projekt-12",
+      "label": "Projekt 12",
+      "outputs": {
+        "fuji": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 6
+    },
+    {
+      "id": "projekt-13",
+      "label": "Projekt 13",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-14",
+      "label": "Projekt 14",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-15",
+      "label": "Projekt 15",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-16",
+      "label": "Projekt 16",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-17",
+      "label": "Projekt 17",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-18",
+      "label": "Projekt 18",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-19",
+      "label": "Projekt 19",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-20",
+      "label": "Projekt 20",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 6
+    },
+    {
+      "id": "projekt-21",
+      "label": "Projekt 21",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-22",
+      "label": "Projekt 22",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "gemalt": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "palette": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ],
+        "spektrum": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln"
+        ]
+      },
+      "n_filters": 7
+    }
+  ]
+}

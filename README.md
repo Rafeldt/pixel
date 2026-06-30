@@ -12,6 +12,7 @@ chapters/                  LaTeX chapters (Projekt, Bewertung, Lernpfad, Stempel
 code/
   bildfilter_projekt.ipynb Student starter notebook
 generate_reveal_masks.py   Quantises design-preview.jpg into 20 reveal-mask PNGs
+render_gallery.py          Builds the anonymised /gallery from ./submissions/
 1_mt_fuji.jpg              Source photo
 design-preview.jpg         Finished painted version (used to build masks)
 paint-by-numbers-canvas.pdf  The canvas students "fill in"
@@ -19,7 +20,24 @@ references.bib             biblatex sources
 skript.tex / skript.pdf    Main LaTeX document
 stempel-wanderung/         The Flask web app
 deploy/                    Server deployment templates (systemd, Traefik)
+submissions/               Raw student work (git-ignored: PII)
 ```
+
+## Projekt-Galerie (`/gallery`)
+
+`render_gallery.py` is a **local** build tool. It reads every student notebook
+from `./submissions/` (git-ignored — student PII), runs each student's filter
+functions on a handful of shared low-resolution, colour-rich test images, and
+writes anonymised results into `stempel-wanderung/static/gallery/` (committed
+and served at the login-gated `/gallery` page).
+
+```powershell
+python render_gallery.py        # re-render after submissions change
+```
+
+Students appear as "Projekt 01..NN"; the private number→name map is written to
+`gallery_mapping.csv` (git-ignored) for the teacher only. No student code ever
+runs on the server — the images are pre-rendered and shipped as static files.
 
 ## Compile the skript
 

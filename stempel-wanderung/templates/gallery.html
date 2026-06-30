@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Galerie - Bildfilter Stempel-Wanderung{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Projekt-Galerie</h2>
+  <p class="hint">
+    Jedes Projekt der Klasse 1f &ndash; anonymisiert als <em>Projekt&nbsp;01</em>
+    bis <em>Projekt&nbsp;{{ '%02d'|format(projects|length) }}</em>. Alle Filter
+    wurden auf dieselben Testbilder angewendet, damit man die Ergebnisse direkt
+    vergleichen kann. Klicke auf ein Bild, um es gross zu sehen.
+  </p>
+
+  {% if sources %}
+  <div class="gallery-tabs" role="tablist" aria-label="Testbild auswaehlen">
+    {% for s in sources %}
+      <a href="{{ url_for('gallery', bild=s.id) }}"
+         class="gallery-tab {{ 'active' if selected and s.id == selected.id }}">
+        {{ s.label }}
+      </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+{% if not selected %}
+  <div class="card"><p class="hint">Die Galerie wurde noch nicht erzeugt.</p></div>
+{% else %}
+
+<p class="gallery-legend">
+  Testbild: <strong>{{ selected.label }}</strong>
+  ({{ selected.size[0] }}&times;{{ selected.size[1] }} px) &middot;
+  {{ projects|length }} Projekte
+</p>
+
+<div class="proj-grid">
+  {% for p in projects %}
+    {% set done = p.outputs.get(selected.id, []) %}
+    <article class="proj-card" id="{{ p.id }}">
+      <header class="proj-head">
+        <h3>{{ p.label }}</h3>
+        <span class="proj-badge">{{ done|length }} Filter</span>
+      </header>
+
+      {% if done %}
+      <div class="filmstrip">
+        <figure class="tile tile-original">
+          <img loading="lazy"
+               src="{{ url_for('static', filename='gallery/' ~ selected.file) }}"
+               alt="Original">
+          <figcaption>Original</figcaption>
+        </figure>
+        {% for f in filters %}
+          {% if f.id in done %}
+          <figure class="tile">
+            <img loading="lazy"
+                 src="{{ url_for('static', filename='gallery/' ~ p.id ~ '/' ~ selected.id ~ '__' ~ f.id ~ '.png') }}"
+                 alt="{{ f.label }}">
+            <figcaption>{{ f.label }}</figcaption>
+          </figure>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% else %}
+        <p class="hint proj-empty">Keine lauffaehigen Filter fuer dieses Bild.</p>
+      {% endif %}
+    </article>
+  {% endfor %}
+</div>
+
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  (function () {
+    var box = document.getElementById('lightbox');
+    var boxImg = document.getElementById('lightbox-img');
+    document.querySelector('.proj-grid').addEventListener('click', function (e) {
+      var img = e.target.closest('.tile img');
+      if (!img) return;
+      boxImg.src = img.currentSrc || img.src;
+      boxImg.alt = img.alt;
+      box.classList.add('show');
+    });
+    function hide() { box.classList.remove('show'); boxImg.src = ''; }
+    box.addEventListener('click', hide);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hide();
+    });
+  })();
+</script>
+{% endif %}
+{% endblock %}

@@ -17,6 +17,19 @@ stempel-wanderung/login_cards.pdf
 Auswahl_Person*.csv
 roster*.csv
 
+# ----------------- Student submissions (PII) --------------
+# Raw student notebooks, reports, photos and grading notes. NEVER commit.
+# The gallery (stempel-wanderung/static/gallery/) is the only rendered,
+# anonymised output that ships; everything below stays local.
+submissions/
+bewertung/
+# private Projekt-NN -> name map for the teacher
+gallery_mapping.csv
+
+# ----------------- Stale nested export --------------------
+# Old one-off snapshot with its own .git; not part of the deploy.
+pixel/
+
 # ----------------- LaTeX build artifacts ------------------
 # We keep skript.tex and skript.pdf in the repo. Everything else
 # xelatex/biblatex generates is transient.

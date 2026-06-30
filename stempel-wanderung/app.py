@@ -14,6 +14,7 @@ Env vars:
   APP_SECRET        Flask session secret (default: dev-secret-change-me)
   TEACHER_PASSWORD  Password for /teacher (default: lehrer)
 """
+import json
 import os
 import sqlite3
 from collections import defaultdict
@@ -175,6 +176,39 @@ def tutorials():
         "tutorials.html",
         tutorials=TUTORIALS,
         stamps_by_id=stamps_by_id,
+    )
+
+
+GALLERY_MANIFEST = Path(__file__).parent / "static" / "gallery" / "manifest.json"
+
+
+@app.route("/gallery")
+def gallery():
+    """Anonymised showcase: every student's filters run on shared test images.
+
+    Login-gated (students or teacher). The images and manifest are rendered
+    offline by render_gallery.py; no student code runs here.
+    """
+    if "username" not in session and not session.get("teacher"):
+        return redirect(url_for("index"))
+    try:
+        manifest = json.loads(GALLERY_MANIFEST.read_text(encoding="utf-8"))
+    except (FileNotFoundError, ValueError):
+        manifest = {"sources": [], "filters": [], "projects": []}
+
+    sources = manifest.get("sources", [])
+    source_ids = [s["id"] for s in sources]
+    sel = request.args.get("bild")
+    if sel not in source_ids:
+        sel = source_ids[0] if source_ids else None
+    selected = next((s for s in sources if s["id"] == sel), None)
+
+    return render_template(
+        "gallery.html",
+        sources=sources,
+        filters=manifest.get("filters", []),
+        projects=manifest.get("projects", []),
+        selected=selected,
     )
 
 
