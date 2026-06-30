@@ -388,8 +388,10 @@ EIGENER_OVERRIDES = {
     # sepia-toned, shrunk and composited into her real Nikon frame (loaded as a
     # chroma-key asset). No override needed — the frame matches ASSET_RE.
     # her final filter lives in a separate notebook and 10x-upscales each pixel
-    # into an alternating-invert box; feed a small base so the boxes stay visible.
-    "vivienne": dict(nb="eigener_filter_code", base_width=24),
+    # into an alternating-invert box. base_width = how many input pixels we feed
+    # = number of boxes across: higher -> finer/less boxy (the picture shows
+    # through when zoomed; it blends toward grey only at tiny thumbnail size).
+    "vivienne": dict(nb="eigener_filter_code", base_width=44),
     # his "fuzzy" filter (blur -> 125-colour quantise -> noise) is broken only by
     # a typo: box_blur checks bounds with undefined ny/nx (meant new_y/new_x).
     # Patch in his own box_blur with just that typo fixed so it runs. Smaller
