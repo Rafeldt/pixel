@@ -1,94 +1,221 @@
 {% extends "base.html" %}
 {% block title %}Galerie - Bildfilter Stempel-Wanderung{% endblock %}
 
+{% macro eigener_strip(p) %}
+  <div class="filmstrip">
+    {% for s in sources %}
+      {% if 'eigener' in p.outputs.get(s.id, []) %}
+      <figure class="tile tile-eigener">
+        <img loading="lazy" src="{{ url_for('static', filename='gallery/' ~ p.id ~ '/' ~ s.id ~ '__eigener.webp') }}" alt="{{ s.label }}">
+        <figcaption>{{ s.label }}{% if p.eigener_own %} <span class="own-note">eigen</span>{% endif %}</figcaption>
+      </figure>
+      {% endif %}
+    {% endfor %}
+    {% for u in uploads %}
+      <figure class="tile tile-upload">
+        <img loading="lazy" src="{{ url_for('static', filename='uploads/' ~ u.id ~ '/' ~ p.id ~ '.webp') }}" alt="Upload {{ u.by }}"
+             onerror="this.closest('figure').style.display='none'">
+        <figcaption>{{ u.by }}</figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
 {% block content %}
 <div class="card">
   <h2>Projekt-Galerie</h2>
   <p class="hint">
     Jedes Projekt der Klasse 1f &ndash; anonymisiert als <em>Projekt&nbsp;01</em>
-    bis <em>Projekt&nbsp;{{ '%02d'|format(projects|length) }}</em>. Alle Filter
-    wurden auf dieselben Testbilder angewendet, damit man die Ergebnisse direkt
-    vergleichen kann. Klicke auf ein Bild, um es gross zu sehen.
+    bis <em>Projekt&nbsp;{{ '%02d'|format(projects|length) }}</em>.
+    {% if view == 'eigene' %}
+      Hier siehst du den <strong>eigenen Filter</strong> jeder Gruppe, angewendet
+      auf alle Beispielbilder. Klicke auf ein Bild zum Zoomen.
+    {% else %}
+      Alle Stationen-Filter f&uuml;r ein gew&auml;hltes Beispielbild.
+    {% endif %}
   </p>
 
+  <div class="view-switch">
+    {% if view == 'eigene' %}
+      <span class="view-tab active">Eigene Filter</span>
+      <a class="view-tab" href="{{ url_for('gallery', ansicht='stationen') }}">Alle Stationen anzeigen &rarr;</a>
+    {% else %}
+      <a class="view-tab" href="{{ url_for('gallery') }}">&larr; Eigene Filter</a>
+      <span class="view-tab active">Alle Stationen</span>
+    {% endif %}
+  </div>
+</div>
+
+{# ===================================================== ALLE STATIONEN ===== #}
+{% if view == 'stationen' %}
   {% if sources %}
   <div class="gallery-tabs" role="tablist" aria-label="Testbild auswaehlen">
     {% for s in sources %}
-      <a href="{{ url_for('gallery', bild=s.id) }}"
-         class="gallery-tab {{ 'active' if selected and s.id == selected.id }}">
-        {{ s.label }}
-      </a>
+      <a href="{{ url_for('gallery', ansicht='stationen', bild=s.id) }}"
+         class="gallery-tab {{ 'active' if selected and s.id == selected.id }}">{{ s.label }}</a>
     {% endfor %}
   </div>
   {% endif %}
-</div>
 
-{% if not selected %}
-  <div class="card"><p class="hint">Die Galerie wurde noch nicht erzeugt.</p></div>
+  {% if selected %}
+  <p class="gallery-legend">Testbild: <strong>{{ selected.label }}</strong>
+    ({{ selected.size[0] }}&times;{{ selected.size[1] }} px)</p>
+  <div class="proj-grid">
+    {% for p in projects %}
+      {% set done = p.outputs.get(selected.id, []) %}
+      <article class="proj-card" id="{{ p.id }}">
+        <header class="proj-head"><h3>{{ p.label }}</h3>
+          <span class="proj-badge">{{ done|length }} Filter</span></header>
+        {% if done %}
+        <div class="filmstrip">
+          <figure class="tile tile-original">
+            <img loading="lazy" src="{{ url_for('static', filename='gallery/' ~ selected.file) }}" alt="Original">
+            <figcaption>Original</figcaption>
+          </figure>
+          {% for f in filters %}{% if f.id in done %}
+          <figure class="tile{{ ' tile-eigener' if f.id == 'eigener' }}">
+            <img loading="lazy" src="{{ url_for('static', filename='gallery/' ~ p.id ~ '/' ~ selected.id ~ '__' ~ f.id ~ '.webp') }}" alt="{{ f.label }}">
+            <figcaption>{{ f.label }}{% if f.id == 'eigener' and p.eigener_own %} <span class="own-note">eigenes Bild</span>{% endif %}</figcaption>
+          </figure>
+          {% endif %}{% endfor %}
+        </div>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+{# ======================================================= EIGENE FILTER ===== #}
 {% else %}
 
-<p class="gallery-legend">
-  Testbild: <strong>{{ selected.label }}</strong>
-  ({{ selected.size[0] }}&times;{{ selected.size[1] }} px) &middot;
-  {{ projects|length }} Projekte
-</p>
+  {# ---- reference strip: the example pictures + uploads ---- #}
+  <p class="gallery-legend">Beispielbilder ({{ sources|length }}){% if uploads %} + {{ uploads|length }} hochgeladen{% endif %}:</p>
+  <div class="ref-strip">
+    {% for s in sources %}
+      <figure class="ref"><img loading="lazy" src="{{ url_for('static', filename='gallery/' ~ s.file) }}" alt="{{ s.label }}"><figcaption>{{ s.label }}</figcaption></figure>
+    {% endfor %}
+    {% for u in uploads %}
+      <figure class="ref ref-upload" id="upload-{{ u.id }}"><img loading="lazy" src="{{ url_for('static', filename='uploads/' ~ u.id ~ '/original.webp') }}" alt="Upload"><figcaption>{{ u.by }}</figcaption></figure>
+    {% endfor %}
+  </div>
 
-<div class="proj-grid">
-  {% for p in projects %}
-    {% set done = p.outputs.get(selected.id, []) %}
-    <article class="proj-card" id="{{ p.id }}">
-      <header class="proj-head">
-        <h3>{{ p.label }}</h3>
-        <span class="proj-badge">{{ done|length }} Filter</span>
-      </header>
+  {# ---- upload form ---- #}
+  <div class="card upload-card" id="upload">
+    <h3>Eigenes Bild hochladen</h3>
+    {% if can_upload %}
+      <p class="hint">Lade ein Bild hoch &ndash; der Server wendet den eigenen Filter
+        jeder Gruppe darauf an. Das Resultat erscheint f&uuml;r alle in der Galerie
+        (Verarbeitung dauert einen Moment).</p>
+      <form class="upload-form" method="post" action="{{ url_for('gallery_upload') }}"
+            enctype="multipart/form-data" onsubmit="return startUpload()">
+        <input type="file" name="bild" accept="image/*" required>
+        <button type="submit" class="btn-primary">Hochladen &amp; filtern</button>
+      </form>
+    {% else %}
+      <p class="hint">{% if is_teacher %}Nur angemeldete Sch&uuml;ler:innen k&ouml;nnen Bilder hochladen.{% else %}Das Hochladen ist gerade nicht verf&uuml;gbar.{% endif %}</p>
+    {% endif %}
+  </div>
 
-      {% if done %}
-      <div class="filmstrip">
-        <figure class="tile tile-original">
-          <img loading="lazy"
-               src="{{ url_for('static', filename='gallery/' ~ selected.file) }}"
-               alt="Original">
-          <figcaption>Original</figcaption>
-        </figure>
-        {% for f in filters %}
-          {% if f.id in done %}
-          <figure class="tile">
-            <img loading="lazy"
-                 src="{{ url_for('static', filename='gallery/' ~ p.id ~ '/' ~ selected.id ~ '__' ~ f.id ~ '.png') }}"
-                 alt="{{ f.label }}">
-            <figcaption>{{ f.label }}</figcaption>
-          </figure>
-          {% endif %}
+  {# ---- voting + eigener grid ---- #}
+  {% if is_teacher %}
+    <p class="gallery-legend"><strong>Abstimmung (Lehrer-Ansicht):</strong> Punkte, die die Klasse verteilt hat.</p>
+    <div class="proj-grid">
+      {% for p in projects|sort(attribute='id') %}
+        {% set t = totals.get(p.id, {}) %}
+        <article class="proj-card" id="{{ p.id }}">
+          <header class="proj-head"><h3>{{ p.label }}</h3>
+            <span class="proj-badge vote-total">{{ t.points or 0 }} Punkte &middot; {{ t.voters or 0 }} Stimmen</span></header>
+          {{ eigener_strip(p) }}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="gallery-legend" id="voting"><strong>Stimme ab:</strong> Verteile
+      {{ vote_budget }} Punkte auf deine Lieblingsprojekte.</p>
+    <form method="post" action="{{ url_for('gallery_vote') }}">
+      <div class="proj-grid">
+        {% for p in projects %}
+          <article class="proj-card" id="{{ p.id }}">
+            <header class="proj-head"><h3>{{ p.label }}</h3>
+              <label class="vote-label">Punkte
+                <input class="vote-input" type="number" name="points-{{ p.id }}"
+                       min="0" max="{{ vote_budget }}" step="1"
+                       value="{{ my_votes.get(p.id, 0) }}" inputmode="numeric">
+              </label>
+            </header>
+            {{ eigener_strip(p) }}
+          </article>
         {% endfor %}
       </div>
-      {% else %}
-        <p class="hint proj-empty">Keine lauffaehigen Filter fuer dieses Bild.</p>
-      {% endif %}
-    </article>
-  {% endfor %}
-</div>
+      <div class="vote-bar">
+        <span>Verteilt: <strong id="used">{{ used_points }}</strong> / {{ vote_budget }}
+          (<span id="left">{{ vote_budget - used_points }}</span> &uuml;brig)</span>
+        <button type="submit" class="btn-primary" id="vote-save">Punkte speichern</button>
+      </div>
+    </form>
+  {% endif %}
+{% endif %}
+
+{% if credits %}
+<p class="gallery-credits"><strong>Bildnachweis:</strong>
+  {% for c in credits %}{{ c }}{% if not loop.last %} &middot; {% endif %}{% endfor %}</p>
+{% endif %}
 
 <div id="lightbox" class="lightbox" aria-hidden="true">
-  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-stage"><img id="lightbox-img" src="" alt="" draggable="false"></div>
+  <div class="lightbox-hint">Mausrad / + &minus; zum Zoomen &middot; Ziehen zum Verschieben &middot; Esc schliesst</div>
 </div>
+<div id="upload-overlay" class="upload-overlay"><div class="upload-spin">Bild wird verarbeitet&hellip;<br><small>Der Server wendet alle eigenen Filter an.</small></div></div>
 
 <script>
   (function () {
-    var box = document.getElementById('lightbox');
-    var boxImg = document.getElementById('lightbox-img');
-    document.querySelector('.proj-grid').addEventListener('click', function (e) {
-      var img = e.target.closest('.tile img');
-      if (!img) return;
-      boxImg.src = img.currentSrc || img.src;
-      boxImg.alt = img.alt;
-      box.classList.add('show');
+    /* ---- lightbox zoom/pan ---- */
+    var box = document.getElementById('lightbox'), img = document.getElementById('lightbox-img');
+    var scale = 1, tx = 0, ty = 0, dragging = false, sx = 0, sy = 0, moved = false;
+    function apply(){ img.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')'; img.style.cursor=scale>1?'grab':'zoom-in'; }
+    function reset(){ scale=1; tx=0; ty=0; apply(); }
+    var grid = document.querySelector('.proj-grid');
+    if (grid) grid.addEventListener('click', function(e){
+      var t=e.target.closest('.tile img'); if(!t) return;
+      img.src=t.currentSrc||t.src; img.alt=t.alt; reset(); box.classList.add('show');
     });
-    function hide() { box.classList.remove('show'); boxImg.src = ''; }
-    box.addEventListener('click', hide);
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') hide();
+    box.addEventListener('wheel', function(e){
+      if(!box.classList.contains('show')) return; e.preventDefault();
+      var r=img.getBoundingClientRect(), ox=e.clientX-(r.left+r.width/2), oy=e.clientY-(r.top+r.height/2), prev=scale;
+      scale=Math.min(8,Math.max(1,scale*(e.deltaY<0?1.2:1/1.2))); var f=scale/prev;
+      tx=(tx-ox)*f+ox; ty=(ty-oy)*f+oy; if(scale===1){tx=0;ty=0;} apply();
+    }, {passive:false});
+    img.addEventListener('mousedown', function(e){ e.preventDefault(); dragging=true; moved=false; sx=e.clientX-tx; sy=e.clientY-ty; img.style.cursor='grabbing'; });
+    window.addEventListener('mousemove', function(e){ if(!dragging) return; tx=e.clientX-sx; ty=e.clientY-sy; moved=true; apply(); });
+    window.addEventListener('mouseup', function(){ dragging=false; if(scale>1) img.style.cursor='grab'; });
+    img.addEventListener('click', function(e){ e.stopPropagation(); if(moved) return; scale=scale>1?1:2.5; if(scale===1){tx=0;ty=0;} apply(); });
+    box.addEventListener('click', function(e){ if(e.target===img) return; box.classList.remove('show'); img.src=''; });
+    document.addEventListener('keydown', function(e){
+      if(!box.classList.contains('show')) return;
+      if(e.key==='Escape'){ box.classList.remove('show'); img.src=''; }
+      else if(e.key==='+'||e.key==='='){ scale=Math.min(8,scale*1.25); apply(); }
+      else if(e.key==='-'){ scale=Math.max(1,scale/1.25); if(scale===1){tx=0;ty=0;} apply(); }
+      else if(e.key==='0'){ reset(); }
     });
+
+    /* ---- vote counter ---- */
+    var BUDGET = {{ vote_budget|default(100) }};
+    var inputs = Array.prototype.slice.call(document.querySelectorAll('.vote-input'));
+    var used = document.getElementById('used'), left = document.getElementById('left'), save = document.getElementById('vote-save');
+    function recount(){
+      var sum = inputs.reduce(function(a,i){ return a + (parseInt(i.value,10)||0); }, 0);
+      if(used) used.textContent = sum;
+      if(left) left.textContent = (BUDGET - sum);
+      var over = sum > BUDGET;
+      var bar = document.querySelector('.vote-bar');
+      if(bar) bar.classList.toggle('over', over);
+      if(save) save.disabled = over;
+    }
+    inputs.forEach(function(i){ i.addEventListener('input', recount); });
+    if(inputs.length) recount();
+
+    /* ---- upload processing overlay ---- */
+    window.startUpload = function(){ document.getElementById('upload-overlay').classList.add('show'); return true; };
   })();
 </script>
-{% endif %}
 {% endblock %}

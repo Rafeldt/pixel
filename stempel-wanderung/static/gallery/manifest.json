@@ -1,40 +1,67 @@
 {
-  "width": 240,
+  "width": 480,
   "sources": [
     {
       "id": "fuji",
-      "label": "Foto (Fuji)",
-      "file": "sources/fuji.png",
+      "label": "Foto Fuji",
+      "file": "sources/fuji.webp",
       "size": [
-        240,
-        170
+        480,
+        340
       ]
     },
     {
-      "id": "gemalt",
-      "label": "Gemalt (Fuji)",
-      "file": "sources/gemalt.png",
+      "id": "blumen",
+      "label": "Tulpen",
+      "file": "sources/blumen.webp",
       "size": [
-        240,
-        170
+        360,
+        480
       ]
     },
     {
-      "id": "palette",
-      "label": "Farbpalette",
-      "file": "sources/palette.png",
+      "id": "papagei",
+      "label": "Papagei",
+      "file": "sources/papagei.webp",
       "size": [
-        240,
-        180
+        309,
+        480
       ]
     },
     {
-      "id": "spektrum",
-      "label": "Farbspektrum",
-      "file": "sources/spektrum.png",
+      "id": "bergsee",
+      "label": "Bergsee",
+      "file": "sources/bergsee.webp",
       "size": [
-        240,
-        149
+        480,
+        360
+      ]
+    },
+    {
+      "id": "pfau",
+      "label": "Pfau",
+      "file": "sources/pfau.webp",
+      "size": [
+        480,
+        360
+      ]
+    },
+    {
+      "id": "schmetterling",
+      "label": "Schmetterling",
+      "file": "sources/schmetterling.webp",
+      "size": [
+        480,
+        319
+      ]
+    },
+    {
+      "id": "fruechte",
+      "label": "Fruechte",
+      "file": "sources/fruechte.webp",
+      "size": [
+        480,
+        320
       ]
     }
   ],
@@ -80,6 +107,15 @@
       "station": 9
     }
   ],
+  "credits": [
+    "Foto Fuji: MNG-Projektbild",
+    "Tulpen: John O'Neill, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Papagei: Quartl, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Bergsee (Moraine Lake): Gorgo, gemeinfrei (Wikimedia Commons)",
+    "Pfau: BS Thurner Hof, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Schmetterling: Kenneth Dwain Harrelson, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Fruechte: Ionutzmovie, CC BY 3.0 (Wikimedia Commons)"
+  ],
   "projects": [
     {
       "id": "projekt-01",
@@ -87,39 +123,66 @@
       "outputs": {
         "fuji": [
           "kein_rot",
-          "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
-          "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
-          "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
-          "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
       "n_filters": 7
@@ -135,125 +198,10 @@
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "palette": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "spektrum": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 7
-    },
-    {
-      "id": "projekt-03",
-      "label": "Projekt 03",
-      "outputs": {
-        "fuji": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "gemalt": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "palette": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "spektrum": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 7
-    },
-    {
-      "id": "projekt-04",
-      "label": "Projekt 04",
-      "outputs": {
-        "fuji": [
-          "kein_rot",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "gemalt": [
-          "kein_rot",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "palette": [
-          "kein_rot",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "spektrum": [
-          "kein_rot",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 6
-    },
-    {
-      "id": "projekt-05",
-      "label": "Projekt 05",
-      "outputs": {
-        "fuji": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -263,7 +211,7 @@
           "spiegeln",
           "eigener"
         ],
-        "gemalt": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -273,7 +221,7 @@
           "spiegeln",
           "eigener"
         ],
-        "palette": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -283,7 +231,27 @@
           "spiegeln",
           "eigener"
         ],
-        "spektrum": [
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -297,8 +265,8 @@
       "n_filters": 8
     },
     {
-      "id": "projekt-06",
-      "label": "Projekt 06",
+      "id": "projekt-03",
+      "label": "Projekt 03",
       "outputs": {
         "fuji": [
           "kein_rot",
@@ -306,31 +274,279 @@
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-04",
+      "label": "Projekt 04",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-05",
+      "label": "Projekt 05",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ],
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ],
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "eigener"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
+      "id": "projekt-06",
+      "label": "Projekt 06",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
       "n_filters": 6
@@ -346,37 +562,69 @@
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "pfau": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "schmetterling": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 8
     },
     {
       "id": "projekt-08",
@@ -388,34 +636,72 @@
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur"
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 6
+      "n_filters": 8
     },
     {
       "id": "projekt-09",
@@ -428,37 +714,71 @@
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 8
     },
     {
       "id": "projekt-10",
@@ -474,7 +794,7 @@
           "spiegeln",
           "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -484,7 +804,7 @@
           "spiegeln",
           "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -494,7 +814,37 @@
           "spiegeln",
           "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -512,74 +862,148 @@
       "label": "Projekt 11",
       "outputs": {
         "fuji": [
-          "kein_rot",
           "invertieren",
           "graustufen",
+          "helligkeit",
+          "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
-          "kein_rot",
+        "blumen": [
           "invertieren",
           "graustufen",
+          "helligkeit",
+          "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
-          "kein_rot",
+        "papagei": [
           "invertieren",
           "graustufen",
+          "helligkeit",
+          "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
-          "kein_rot",
+        "bergsee": [
           "invertieren",
           "graustufen",
+          "helligkeit",
+          "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 5
+      "n_filters": 7
     },
     {
       "id": "projekt-12",
       "label": "Projekt 12",
       "outputs": {
         "fuji": [
+          "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
+          "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
+          "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
+          "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 6
+      "n_filters": 8,
+      "eigener_own": true
     },
     {
       "id": "projekt-13",
@@ -592,37 +1016,71 @@
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 7
+      "n_filters": 8
     },
     {
       "id": "projekt-14",
@@ -638,7 +1096,7 @@
           "spiegeln",
           "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -648,7 +1106,7 @@
           "spiegeln",
           "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -658,7 +1116,37 @@
           "spiegeln",
           "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -685,7 +1173,7 @@
           "spiegeln",
           "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -695,7 +1183,7 @@
           "spiegeln",
           "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -705,7 +1193,37 @@
           "spiegeln",
           "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -729,129 +1247,10 @@
           "helligkeit",
           "schwellwert",
           "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "palette": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "spektrum": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 7
-    },
-    {
-      "id": "projekt-17",
-      "label": "Projekt 17",
-      "outputs": {
-        "fuji": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "gemalt": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "palette": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "spektrum": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 7
-    },
-    {
-      "id": "projekt-18",
-      "label": "Projekt 18",
-      "outputs": {
-        "fuji": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "gemalt": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "palette": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ],
-        "spektrum": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 7
-    },
-    {
-      "id": "projekt-19",
-      "label": "Projekt 19",
-      "outputs": {
-        "fuji": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -861,7 +1260,7 @@
           "spiegeln",
           "eigener"
         ],
-        "gemalt": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -871,7 +1270,7 @@
           "spiegeln",
           "eigener"
         ],
-        "palette": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -881,7 +1280,27 @@
           "spiegeln",
           "eigener"
         ],
-        "spektrum": [
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
           "kein_rot",
           "invertieren",
           "graustufen",
@@ -895,6 +1314,230 @@
       "n_filters": 8
     },
     {
+      "id": "projekt-17",
+      "label": "Projekt 17",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-18",
+      "label": "Projekt 18",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 8
+    },
+    {
+      "id": "projekt-19",
+      "label": "Projekt 19",
+      "outputs": {
+        "fuji": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ],
+        "blumen": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ],
+        "papagei": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ],
+        "bergsee": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "spiegeln",
+          "eigener"
+        ]
+      },
+      "n_filters": 7
+    },
+    {
       "id": "projekt-20",
       "label": "Projekt 20",
       "outputs": {
@@ -904,34 +1547,72 @@
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "spiegeln"
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "pfau": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "schmetterling": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
+        ],
+        "fruechte": [
+          "kein_rot",
+          "invertieren",
+          "graustufen",
+          "helligkeit",
+          "schwellwert",
+          "box_blur",
+          "spiegeln",
+          "eigener"
         ]
       },
-      "n_filters": 6
+      "n_filters": 8
     },
     {
       "id": "projekt-21",
@@ -943,78 +1624,62 @@
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "blumen": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "papagei": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "bergsee": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
-        ]
-      },
-      "n_filters": 7
-    },
-    {
-      "id": "projekt-22",
-      "label": "Projekt 22",
-      "outputs": {
-        "fuji": [
-          "kein_rot",
-          "invertieren",
-          "graustufen",
-          "helligkeit",
-          "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "gemalt": [
+        "pfau": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "palette": [
+        "schmetterling": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ],
-        "spektrum": [
+        "fruechte": [
           "kein_rot",
           "invertieren",
           "graustufen",
           "helligkeit",
           "schwellwert",
-          "box_blur",
-          "spiegeln"
+          "spiegeln",
+          "eigener"
         ]
       },
       "n_filters": 7

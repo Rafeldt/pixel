@@ -25,19 +25,39 @@ submissions/               Raw student work (git-ignored: PII)
 
 ## Projekt-Galerie (`/gallery`)
 
-`render_gallery.py` is a **local** build tool. It reads every student notebook
-from `./submissions/` (git-ignored — student PII), runs each student's filter
-functions on a handful of shared low-resolution, colour-rich test images, and
-writes anonymised results into `stempel-wanderung/static/gallery/` (committed
-and served at the login-gated `/gallery` page).
+`render_gallery.py` reads every student notebook from `./submissions/`
+(git-ignored — student PII), runs each student's filter functions on seven
+shared, colour-rich test images (Fuji + Wikimedia photos, see
+`test_images/CREDITS.md`), and writes anonymised WebP results into
+`stempel-wanderung/static/gallery/` (committed, served at the login-gated
+`/gallery`). Paired teammates count as one project; Station 9 (the *eigener
+Filter*) is reproduced from each group's own invocation.
 
 ```powershell
 python render_gallery.py        # re-render after submissions change
 ```
 
 Students appear as "Projekt 01..NN"; the private number→name map is written to
-`gallery_mapping.csv` (git-ignored) for the teacher only. No student code ever
-runs on the server — the images are pre-rendered and shipped as static files.
+`gallery_mapping.csv` (git-ignored) for the teacher only.
+
+The gallery page has three interactive parts:
+
+- **Default "Eigene Filter" view** — each group's custom filter on every example
+  picture. "Alle Stationen anzeigen" reveals the standard station filters.
+- **Abstimmung** — each logged-in student distributes 100 points over their
+  favourite projects; only the teacher sees the totals.
+- **Upload** — a student uploads one picture and the server runs every group's
+  eigener filter on it (shared in the gallery). This is the only place student
+  code runs live: the Flask app imports `render_gallery` and uses the notebooks
+  under `submissions/`. Those are **not** in git; deploy a trimmed copy
+  (notebooks + chroma-key assets only) to the server out-of-band, e.g.
+
+  ```bash
+  scp -r _deploy_submissions/* root@server:/opt/pixel/submissions/
+  ```
+
+  (build `_deploy_submissions/` locally; it is git-ignored.) Without it the
+  static gallery still works and uploads are simply disabled.
 
 ## Compile the skript
 

@@ -11,6 +11,7 @@ venv/
 stempel-wanderung/data/
 stempel-wanderung/credentials.csv
 stempel-wanderung/login_cards.pdf
+stempel-wanderung/static/uploads/    # student-uploaded pictures (user content)
 .env
 
 # ----------------- Class roster (student PII) -------------
@@ -23,6 +24,7 @@ roster*.csv
 # anonymised output that ships; everything below stays local.
 submissions/
 bewertung/
+_deploy_submissions/     # trimmed notebooks+assets scp'd to the server (not GitHub)
 # private Projekt-NN -> name map for the teacher
 gallery_mapping.csv
 

@@ -16,7 +16,9 @@ Env vars:
 """
 import json
 import os
+import secrets
 import sqlite3
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -27,9 +29,44 @@ from werkzeug.security import check_password_hash
 from stamps import STAMPS, TUTORIALS, get_stamp_by_id, tutorial_for_stamp
 
 DB_PATH = Path(__file__).parent / "data" / "progress.db"
+STATIC_DIR = Path(__file__).parent / "static"
+GALLERY_MANIFEST = STATIC_DIR / "gallery" / "manifest.json"
+UPLOAD_DIR = STATIC_DIR / "uploads"
+
+VOTE_BUDGET = 100                 # points each student may distribute
+UPLOAD_MAXSIDE = 420              # downscale uploads before filtering (speed)
+MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("APP_SECRET", "dev-secret-change-me")
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_BYTES
+
+
+# --- Lazy filter engine: reuse render_gallery (with the gitignored
+# submissions/) to run each project's eigener filter on an uploaded image.
+# Imported lazily so the app still starts (and the static gallery still works)
+# if the harness/submissions are not present on this host.
+_ENGINE = {"loaded": False, "rg": None, "projects": None}
+
+
+def get_engine():
+    if not _ENGINE["loaded"]:
+        _ENGINE["loaded"] = True
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+            import render_gallery as rg
+            _ENGINE["rg"] = rg
+            _ENGINE["projects"] = rg.load_projects()
+        except Exception as exc:           # submissions/harness absent → no uploads
+            app.logger.warning("Upload filter engine unavailable: %s", exc)
+            _ENGINE["rg"] = None
+            _ENGINE["projects"] = None
+    return _ENGINE["rg"], _ENGINE["projects"]
+
+
+def uploads_enabled():
+    return GALLERY_MANIFEST.exists() and (Path(__file__).resolve().parent.parent
+                                          / "submissions").is_dir()
 
 
 def get_db():
@@ -66,6 +103,23 @@ def init_db():
               stamp_id  TEXT NOT NULL,
               marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY (username, stamp_id),
+              FOREIGN KEY (username) REFERENCES students(username)
+                ON DELETE CASCADE
+            );
+            -- Gallery: each student distributes up to 100 points over projects.
+            CREATE TABLE IF NOT EXISTS gallery_votes (
+              username   TEXT NOT NULL,
+              projekt_id TEXT NOT NULL,
+              points     INTEGER NOT NULL DEFAULT 0,
+              PRIMARY KEY (username, projekt_id),
+              FOREIGN KEY (username) REFERENCES students(username)
+                ON DELETE CASCADE
+            );
+            -- Gallery: student-uploaded pictures the server filters (shared).
+            CREATE TABLE IF NOT EXISTS gallery_uploads (
+              id         TEXT PRIMARY KEY,
+              username   TEXT NOT NULL,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
               FOREIGN KEY (username) REFERENCES students(username)
                 ON DELETE CASCADE
             );
@@ -179,37 +233,151 @@ def tutorials():
     )
 
 
-GALLERY_MANIFEST = Path(__file__).parent / "static" / "gallery" / "manifest.json"
+def _load_manifest():
+    try:
+        return json.loads(GALLERY_MANIFEST.read_text(encoding="utf-8"))
+    except (FileNotFoundError, ValueError):
+        return {"sources": [], "filters": [], "projects": [], "credits": []}
+
+
+def _list_uploads(conn):
+    """Shared uploads that have at least an original image on disk."""
+    rows = conn.execute(
+        "SELECT u.id, s.display_name AS by_name FROM gallery_uploads u "
+        "JOIN students s ON s.username = u.username ORDER BY u.created_at"
+    ).fetchall()
+    out = []
+    for r in rows:
+        if (UPLOAD_DIR / r["id"] / "original.webp").exists():
+            out.append({"id": r["id"], "by": r["by_name"]})
+    return out
 
 
 @app.route("/gallery")
 def gallery():
-    """Anonymised showcase: every student's filters run on shared test images.
-
-    Login-gated (students or teacher). The images and manifest are rendered
-    offline by render_gallery.py; no student code runs here.
-    """
+    """Anonymised showcase. Default view: each project's own (eigener) filter on
+    every example picture + shared uploads. 'Alle Stationen' shows the standard
+    station filters per picture. Students distribute 100 points; the teacher
+    sees the totals."""
     if "username" not in session and not session.get("teacher"):
         return redirect(url_for("index"))
-    try:
-        manifest = json.loads(GALLERY_MANIFEST.read_text(encoding="utf-8"))
-    except (FileNotFoundError, ValueError):
-        manifest = {"sources": [], "filters": [], "projects": []}
-
+    manifest = _load_manifest()
     sources = manifest.get("sources", [])
-    source_ids = [s["id"] for s in sources]
-    sel = request.args.get("bild")
-    if sel not in source_ids:
-        sel = source_ids[0] if source_ids else None
-    selected = next((s for s in sources if s["id"] == sel), None)
+    projects = manifest.get("projects", [])
+    filters = manifest.get("filters", [])
+    is_teacher = bool(session.get("teacher"))
+
+    with get_db() as conn:
+        uploads = _list_uploads(conn)
+        my_votes, totals = {}, {}
+        if is_teacher:
+            for r in conn.execute(
+                "SELECT projekt_id, SUM(points) AS p, COUNT(*) AS n "
+                "FROM gallery_votes WHERE points > 0 GROUP BY projekt_id"):
+                totals[r["projekt_id"]] = {"points": r["p"], "voters": r["n"]}
+        elif "username" in session:
+            for r in conn.execute(
+                "SELECT projekt_id, points FROM gallery_votes WHERE username = ?",
+                (session["username"],)):
+                my_votes[r["projekt_id"]] = r["points"]
+
+    common = dict(sources=sources, filters=filters, projects=projects,
+                  credits=manifest.get("credits", []), uploads=uploads,
+                  is_teacher=is_teacher)
+
+    if request.args.get("ansicht") == "stationen":
+        source_ids = [s["id"] for s in sources]
+        sel = request.args.get("bild")
+        if sel not in source_ids:
+            sel = source_ids[0] if source_ids else None
+        selected = next((s for s in sources if s["id"] == sel), None)
+        return render_template("gallery.html", view="stationen",
+                               selected=selected, **common)
 
     return render_template(
-        "gallery.html",
-        sources=sources,
-        filters=manifest.get("filters", []),
-        projects=manifest.get("projects", []),
-        selected=selected,
-    )
+        "gallery.html", view="eigene",
+        eigener=next((f for f in filters if f["id"] == "eigener"), None),
+        my_votes=my_votes, used_points=sum(my_votes.values()),
+        vote_budget=VOTE_BUDGET, totals=totals,
+        can_upload=("username" in session) and uploads_enabled(),
+        **common)
+
+
+@app.route("/gallery/vote", methods=["POST"])
+def gallery_vote():
+    if "username" not in session:
+        return redirect(url_for("index"))
+    valid = {p["id"] for p in _load_manifest().get("projects", [])}
+    allocations, total = {}, 0
+    for pid in valid:
+        try:
+            v = int((request.form.get("points-" + pid) or "0").strip() or "0")
+        except ValueError:
+            v = 0
+        v = max(0, min(VOTE_BUDGET, v))
+        allocations[pid] = v
+        total += v
+    if total > VOTE_BUDGET:
+        flash(f"Zu viele Punkte verteilt ({total}/{VOTE_BUDGET}). "
+              "Bitte reduziere die Punkte.", "error")
+        return redirect(url_for("gallery") + "#voting")
+    with get_db() as conn:
+        conn.execute("DELETE FROM gallery_votes WHERE username = ?",
+                     (session["username"],))
+        conn.executemany(
+            "INSERT INTO gallery_votes (username, projekt_id, points) "
+            "VALUES (?, ?, ?)",
+            [(session["username"], pid, v)
+             for pid, v in allocations.items() if v > 0])
+        conn.commit()
+    flash(f"Punkte gespeichert ({total}/{VOTE_BUDGET} verteilt).", "success")
+    return redirect(url_for("gallery") + "#voting")
+
+
+@app.route("/gallery/upload", methods=["POST"])
+def gallery_upload():
+    if "username" not in session:        # only students may upload (FK to roster)
+        return redirect(url_for("index"))
+    rg, projects = get_engine()
+    if rg is None or not projects:
+        flash("Das Hochladen ist auf diesem Server nicht verfuegbar.", "error")
+        return redirect(url_for("gallery") + "#upload")
+
+    upload = request.files.get("bild")
+    if not upload or not upload.filename:
+        flash("Bitte eine Bilddatei auswaehlen.", "error")
+        return redirect(url_for("gallery") + "#upload")
+
+    from PIL import Image
+    try:
+        img = Image.open(upload.stream).convert("RGB")
+        img.load()
+    except Exception:
+        flash("Die Datei konnte nicht als Bild gelesen werden.", "error")
+        return redirect(url_for("gallery") + "#upload")
+
+    uid = secrets.token_hex(8)
+    out_dir = UPLOAD_DIR / uid
+    out_dir.mkdir(parents=True, exist_ok=True)
+    rg.save_img(rg.fit(img, 640), out_dir / "original.webp")
+    base = rg.to_grid(rg.fit(img, UPLOAD_MAXSIDE))
+
+    n_ok = 0
+    for proj in projects:
+        try:
+            res = rg.project_eigener_image(proj, base)
+        except Exception:
+            res = None
+        if res is not None:
+            rg.save_img(res, out_dir / f"{proj['id']}.webp")
+            n_ok += 1
+
+    with get_db() as conn:
+        conn.execute("INSERT INTO gallery_uploads (id, username) VALUES (?, ?)",
+                     (uid, session["username"]))
+        conn.commit()
+    flash(f"Bild verarbeitet – {n_ok} eigene Filter angewendet.", "success")
+    return redirect(url_for("gallery") + "#upload-" + uid)
 
 
 @app.route("/student/ready", methods=["POST"])

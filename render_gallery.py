@@ -19,10 +19,15 @@ from __future__ import annotations
 
 import ast
 import colorsys
+import contextlib
 import csv
 import inspect
+import io
 import json
+import math
+import os
 import random
+import re
 import sys
 import time
 from pathlib import Path
@@ -35,8 +40,18 @@ GALLERY = ROOT / "stempel-wanderung" / "static" / "gallery"
 SOURCES = GALLERY / "sources"
 MAPPING_CSV = ROOT / "gallery_mapping.csv"
 
-WIDTH = 240            # low-res long side for the test images
+WIDTH = 480            # target LONGEST side for the test images (well below 1000)
 SEED = 20260630        # fixes both the anonymised numbering and any randomness
+
+# Students who worked as a pair count as ONE project. The representative folder
+# is kept; a teammate's separate submission folder (if any) is dropped so the
+# team's work isn't duplicated. Names are only used in the private mapping CSV,
+# never in the deployed (anonymised) gallery.
+TEAMS = {
+    "jakob": ["jakob", "lasse"],   # Jakob & Lasse worked together
+    "miya": ["miya", "siqi"],      # Miya & Siqi worked together (Siqi has no own folder)
+}
+DROP_FOLDERS = {"lasse"}           # teammate folders represented by another folder
 
 
 # --------------------------------------------------------------- pixel helpers
@@ -75,6 +90,15 @@ def copy_grid(grid):
     return [row[:] for row in grid]
 
 
+EXT = "webp"          # photographic filter output -> WebP (small, lossless-ish)
+
+
+def save_img(img: Image.Image, path) -> None:
+    """Save a filter output. WebP keeps photos ~8x smaller than PNG while
+    staying crisp on flat regions (threshold, posterize, pixel boxes)."""
+    img.save(str(path), "WEBP", quality=88, method=4)
+
+
 # ---------------------------------------------------------------- test images
 def make_palette(width: int = WIDTH) -> Image.Image:
     """A grid of saturated colour tiles: many distinct colours, flat regions,
@@ -96,51 +120,56 @@ def make_palette(width: int = WIDTH) -> Image.Image:
     return img
 
 
-def make_spectrum(width: int = WIDTH) -> Image.Image:
-    """Smooth hue gradient (x) with a saturation/brightness ramp (y).
-    A continuous rainbow — shows graustufen / schwellwert / blur gradients."""
-    h = round(width * 0.62)
-    img = Image.new("RGB", (width, h))
-    px = img.load()
-    for y in range(h):
-        ty = y / (h - 1)
-        for x in range(width):
-            hue = x / (width - 1)
-            sat = 0.35 + 0.65 * ty
-            val = 1.0 - 0.55 * ty
-            rr, gg, bb = colorsys.hsv_to_rgb(hue, sat, val)
-            px[x, y] = (int(rr * 255), int(gg * 255), int(bb * 255))
+def fit(img: Image.Image, maxside: int = WIDTH) -> Image.Image:
+    """Downscale so the longer side is at most `maxside` (keeps aspect)."""
+    img = img.convert("RGB")
+    w, h = img.size
+    s = maxside / max(w, h)
+    if s < 1:
+        img = img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
     return img
 
 
-def downscale(path: Path, width: int = WIDTH) -> Image.Image:
-    img = Image.open(path).convert("RGB")
-    w, h = img.size
-    return img.resize((width, round(h * width / w)), Image.LANCZOS)
+def load_fit(path: Path, maxside: int = WIDTH) -> Image.Image:
+    return fit(Image.open(path), maxside)
+
+
+# Each source: id, German label, source file. Real, colour-rich photos at a
+# resolution well below 1000 px. Fuji is the project's own asset; the other
+# three are free Wikimedia Commons images (see test_images/CREDITS.md).
+SOURCE_SPECS = [
+    ("fuji", "Foto Fuji", ROOT / "1_mt_fuji.jpg"),
+    ("blumen", "Tulpen", ROOT / "test_images" / "flowers.jpg"),
+    ("papagei", "Papagei", ROOT / "test_images" / "parrot.jpg"),
+    ("bergsee", "Bergsee", ROOT / "test_images" / "landscape.jpg"),
+    ("pfau", "Pfau", ROOT / "test_images" / "peacock.jpg"),
+    ("schmetterling", "Schmetterling", ROOT / "test_images" / "butterfly.jpg"),
+    ("fruechte", "Fruechte", ROOT / "test_images" / "fruits.jpg"),
+]
+
+CREDITS = [
+    "Foto Fuji: MNG-Projektbild",
+    "Tulpen: John O'Neill, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Papagei: Quartl, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Bergsee (Moraine Lake): Gorgo, gemeinfrei (Wikimedia Commons)",
+    "Pfau: BS Thurner Hof, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Schmetterling: Kenneth Dwain Harrelson, CC BY-SA 3.0 (Wikimedia Commons)",
+    "Fruechte: Ionutzmovie, CC BY 3.0 (Wikimedia Commons)",
+]
 
 
 def build_sources() -> list[dict]:
     """Create the shared test images. Returns manifest entries (with grids)."""
     SOURCES.mkdir(parents=True, exist_ok=True)
-    specs = []
-
-    # 1) Real photo from the project (license-clean: our own asset).
-    if (ROOT / "1_mt_fuji.jpg").exists():
-        specs.append(("fuji", "Foto (Fuji)", downscale(ROOT / "1_mt_fuji.jpg")))
-    # 2) Painted paint-by-numbers Fuji: flat, very saturated regions.
-    if (ROOT / "design-preview.jpg").exists():
-        specs.append(("gemalt", "Gemalt (Fuji)", downscale(ROOT / "design-preview.jpg")))
-    # 3) Synthetic colour palette + 4) continuous spectrum.
-    specs.append(("palette", "Farbpalette", make_palette()))
-    specs.append(("spektrum", "Farbspektrum", make_spectrum()))
-
     out = []
-    for sid, label, img in specs:
-        rel = f"sources/{sid}.png"
-        img.save(SOURCES / f"{sid}.png")
-        out.append({"id": sid, "label": label, "file": rel,
-                    "grid": to_grid(img),
-                    "size": list(img.size)})
+    for sid, label, path in SOURCE_SPECS:
+        if not path.exists():
+            print(f"  !! missing source image: {path}", file=sys.stderr)
+            continue
+        img = load_fit(path)
+        save_img(img, SOURCES / f"{sid}.{EXT}")
+        out.append({"id": sid, "label": label, "file": f"sources/{sid}.{EXT}",
+                    "grid": to_grid(img), "size": list(img.size)})
     return out
 
 
@@ -168,11 +197,14 @@ FILTER_SPECS = [
     dict(id="spiegeln", label="Gespiegelt", station=8,
          names=["spiegeln", "spiegle", "spiegelung", "horizontal_spiegeln", "spiegel"],
          call=lambda f, g: f(g)),
-    dict(id="eigener", label="Eigener Filter", station=9,
-         names=["mein_filter", "meinfilter", "eigener_filter", "eigenerfilter",
-                "eigener", "mein_eigener_filter", "filter"],
-         call=lambda f, g: f(g)),
 ]
+
+# Station 9 ("eigener Filter") is handled separately: it is wildly varied
+# (renamed functions, composite pipelines, extra args, interactive widgets,
+# extra image assets) so instead of guessing a function we *replay the
+# student's actual Station-9 result expression* on the test image. See
+# find_eigener_spec() / run_eigener().
+EIGENER = dict(id="eigener", label="Eigener Filter", station=9)
 
 
 def strip_magics(src: str) -> str:
@@ -210,29 +242,61 @@ def candidate_notebooks(folder: Path):
     return cands
 
 
+def safe_parse(src: str):
+    """ast.parse, but tolerant of a broken tail: if a cell has un-commented
+    prose or a typo on some line (students do this a lot), keep the parseable
+    prefix by truncating at the offending line and retrying."""
+    for _ in range(40):
+        try:
+            return ast.parse(src)
+        except SyntaxError as e:
+            lineno = e.lineno or 1
+            lines = src.splitlines()
+            if lineno <= 1 or lineno > len(lines):
+                return None
+            src = "\n".join(lines[:lineno - 1])
+            if not src.strip():
+                return None
+    return None
+
+
+def _is_literal(node) -> bool:
+    """True for a constant / container-of-constants (safe to exec at import
+    time), e.g. a module-level cache `colors_done = {}` or `amplitude = 10`."""
+    if isinstance(node, ast.Constant):
+        return True
+    if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
+        return all(_is_literal(e) for e in node.elts)
+    if isinstance(node, ast.Dict):
+        return (all(k is None or _is_literal(k) for k in node.keys)
+                and all(_is_literal(v) for v in node.values))
+    return False
+
+
 def extract_namespace(nb_path: Path) -> dict:
-    """Exec only the function/class defs + imports from a notebook, cell by
-    cell, ignoring any cell that fails. Returns the populated namespace."""
+    """Build a namespace from a notebook by exec-ing its top-level function/class
+    defs, imports and simple literal assignments, one node at a time so a single
+    failing import (e.g. ipywidgets) or broken statement never drops the rest."""
     nb = json.loads(nb_path.read_text(encoding="utf-8", errors="ignore"))
-    ns: dict = {"Image": Image}
+    ns: dict = {"Image": Image, "math": math}
+    KEEP = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef,
+            ast.Import, ast.ImportFrom)
     for cell in nb.get("cells", []):
         if cell.get("cell_type") != "code":
             continue
         src = strip_magics("".join(cell.get("source", [])))
-        try:
-            tree = ast.parse(src)
-        except SyntaxError:
+        tree = safe_parse(src)
+        if tree is None:
             continue
-        keep = [n for n in tree.body if isinstance(
-            n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef,
-                ast.Import, ast.ImportFrom))]
-        if not keep:
-            continue
-        mod = ast.Module(body=keep, type_ignores=[])
-        try:
-            exec(compile(mod, str(nb_path), "exec"), ns)
-        except Exception:
-            continue
+        for node in tree.body:
+            if not (isinstance(node, KEEP) or
+                    (isinstance(node, ast.Assign) and _is_literal(node.value))):
+                continue
+            try:
+                exec(compile(ast.Module(body=[node], type_ignores=[]),
+                             str(nb_path), "exec"), ns)
+            except Exception:
+                continue
     return ns
 
 
@@ -273,6 +337,306 @@ def run_filter(spec, fn, grid):
         return from_grid(result)
     except Exception:
         return None
+
+
+# ----------------------------------------------------- eigener Filter (St. 9)
+# Station 9 is the most varied: renamed functions, composite pipelines, extra
+# args, interactive widgets, cross-cell intermediate variables, even extra
+# image assets. Rather than guess a function we reproduce the student's *own*
+# Station-9 invocation. Two tiers: (1) eval the expression saved to a
+# "station9..." path; (2) if that needs cross-cell state, exec the whole
+# notebook with patched I/O and capture the grid it saves.
+EIG_PATH_RE = re.compile(r'(station[_\s-]*9|mein[_\s-]*filter|meinfilter|eigen)', re.I)
+ABGABE_RE = re.compile(r'abgabe', re.I)
+STD_SAVE_RE = re.compile(r'station[_\s-]*[2-8]\b', re.I)
+# Filenames that denote an OVERLAY asset (frame / watermark / mask) rather than
+# the subject photo: overlays load the student's real file (so chroma-keying
+# works); every other photo is replaced by the shared test image.
+ASSET_RE = re.compile(r'rahmen|frame|kamera|camera|watermark|wasserzeichen|'
+                      r'overlay|sticker|logo|maske|mask', re.I)
+
+EIGENER_OVERRIDES = {
+    "marta": dict(expr="rgb_glitch(bild, 8)"),        # interactive widget, no save
+    "nicolas": dict(expr="box_crt(bild)"),            # invocation left commented out
+    # green-screen camera-frame collage: only meaningful composited into her
+    # real Nikon frame, on her own photo (both pulled from JupyterHub).
+    "ella": dict(own_image="_jupyterhub/dein_foto.jpg"),
+    # her final filter lives in a separate notebook and 10x-upscales each pixel
+    # into an alternating-invert box; feed a small base so the boxes stay visible.
+    "vivienne": dict(nb="eigener_filter_code", base_width=24),
+    # his "fuzzy" filter (blur -> 125-colour quantise -> noise) is broken only by
+    # a typo: box_blur checks bounds with undefined ny/nx (meant new_y/new_x).
+    # Patch in his own box_blur with just that typo fixed so it runs. Smaller
+    # base because his blur averages a 16x16 window per pixel.
+    "michael": dict(
+        expr="fuzzy_filter(bild, 16, 64, 0, 50)",
+        base_width=240,
+        patch=(
+            "def box_blur(bild, blockgroesse):\n"
+            "    hoehe = len(bild)\n"
+            "    breite = len(bild[0])\n"
+            "    neues_bild = [[(0, 0, 0)] * breite for _ in range(hoehe)]\n"
+            "    for y in range(hoehe):\n"
+            "        for x in range(breite):\n"
+            "            summe_r = summe_g = summe_b = anzahl = 0\n"
+            "            for box_y in range(blockgroesse):\n"
+            "                for box_x in range(blockgroesse):\n"
+            "                    new_y = y + box_y - int(blockgroesse / 2)\n"
+            "                    new_x = x + box_x - int(blockgroesse / 2)\n"
+            "                    if 0 <= new_y < hoehe and 0 <= new_x < breite:\n"
+            "                        r, g, b = bild[new_y][new_x]\n"
+            "                        summe_r += r; summe_g += g; summe_b += b\n"
+            "                        anzahl += 1\n"
+            "            neues_bild[y][x] = (summe_r // anzahl, summe_g // anzahl,\n"
+            "                                summe_b // anzahl)\n"
+            "    return neues_bild\n"
+        ),
+    ),
+}
+
+
+def downscale_grid(grid, width):
+    img = from_grid(grid)
+    w, h = img.size
+    return to_grid(img.resize((width, max(1, round(h * width / w))), Image.NEAREST))
+
+
+def _basename(p):
+    return os.path.basename(str(p)).strip().lower()
+
+
+def find_eigener_expr(nb_path: Path):
+    """Fast path: source of the expression saved to a 'station9...' path."""
+    nb = json.loads(nb_path.read_text(encoding="utf-8", errors="ignore"))
+    cells = ["".join(c.get("source", [])) for c in nb.get("cells", [])
+             if c.get("cell_type") == "code"]
+    best = None
+    for raw in cells:
+        src = strip_magics(raw)
+        tree = safe_parse(src)
+        if tree is None:
+            continue
+        assigns = {n.targets[0].id: n.value for n in tree.body
+                   if isinstance(n, ast.Assign) and len(n.targets) == 1
+                   and isinstance(n.targets[0], ast.Name)}
+        for node in ast.walk(tree):
+            if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                    and node.func.id == "speichere_bild" and len(node.args) >= 2):
+                continue
+            path = node.args[1]
+            if not (isinstance(path, ast.Constant) and isinstance(path.value, str)):
+                continue
+            pv = path.value
+            if ABGABE_RE.search(pv) or not EIG_PATH_RE.search(pv):
+                continue
+            arg = node.args[0]
+            if isinstance(arg, ast.Name) and arg.id in assigns:
+                arg = assigns[arg.id]
+            expr_src = ast.get_source_segment(src, arg)
+            if not expr_src:
+                continue
+            rank = 3 if re.search(r'station[_\s-]*9|eigen', pv, re.I) else \
+                2 if re.search(r'mein', pv, re.I) else 1
+            if best is None or rank > best[0]:
+                best = (rank, expr_src)
+    return best[1] if best else None
+
+
+def _asset_grid(folder: Path, filename: str, width=WIDTH):
+    """Load a real asset image from the submission folder (recursive basename
+    match), downscaled with NEAREST so exact colours (pure-green chroma key)
+    survive."""
+    target = _basename(filename)
+    match = next((p for p in folder.rglob("*")
+                  if p.is_file() and _basename(p.name) == target), None)
+    if match is None:
+        return None
+    try:
+        img = Image.open(match).convert("RGB")
+    except Exception:
+        return None
+    w, h = img.size
+    img = img.resize((width, max(1, round(h * width / w))), Image.NEAREST)
+    return to_grid(img)
+
+
+def _make_loader(base_grid, folder: Path):
+    """Patched lade_bild: overlay assets -> the student's real file; any other
+    photo -> the shared test image (base_grid)."""
+    cache = {}
+
+    def loader(path):
+        bn = _basename(path)
+        if ASSET_RE.search(bn):
+            if bn not in cache:
+                g = _asset_grid(folder, path)
+                cache[bn] = g if g is not None else base_grid
+            return copy_grid(cache[bn])
+        return copy_grid(base_grid)
+
+    return loader
+
+
+def _eigener_image(grid):
+    if not grid:
+        return None
+    try:
+        return from_grid(grid)
+    except Exception:
+        return None
+
+
+def eval_eigener(ns: dict, expr: str, base_grid, folder: Path):
+    local = dict(ns)
+    local["bild"] = copy_grid(base_grid)
+    local["lade_bild"] = _make_loader(base_grid, folder)
+    local["speichere_bild"] = lambda *a, **k: None
+    random.seed(SEED)          # deterministic for filters that add random noise
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return _eigener_image(eval(compile(expr, "<eigener>", "eval"), local))
+    except Exception:
+        return None
+
+
+def exec_capture_eigener(nb_path: Path, base_grid, folder: Path, extra_expr=None):
+    """Exec a notebook's top-level statements (node by node, resilient) with
+    lade_bild/speichere_bild patched, and capture the grid saved to a
+    'station9...' path. Handles composites, extra args and cross-cell
+    intermediate variables that the fast expr-eval can't reach."""
+    nb = json.loads(nb_path.read_text(encoding="utf-8", errors="ignore"))
+    captured = {}
+    ns = {"Image": Image, "math": math, "bild": copy_grid(base_grid),
+          "lade_bild": _make_loader(base_grid, folder),
+          "speichere_bild": lambda g, p="": captured.setdefault(str(p), g)}
+    # The student's own lade_bild/speichere_bild (defined in cell 0) must NOT
+    # replace our patched capture hooks, or nothing is captured and files get
+    # written to disk. Skip those redefinitions.
+    PROTECTED = {"lade_bild", "speichere_bild"}
+    devnull = io.StringIO()
+    failed = set()       # names whose latest assignment raised (tainted/stale)
+
+    def is_stale_save(node):
+        # speichere_bild(<tainted-name>, ...) would save a stale leftover value
+        return (isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
+                and isinstance(node.value.func, ast.Name)
+                and node.value.func.id == "speichere_bild"
+                and node.value.args
+                and isinstance(node.value.args[0], ast.Name)
+                and node.value.args[0].id in failed)
+
+    for cell in nb.get("cells", []):
+        if cell.get("cell_type") != "code":
+            continue
+        tree = safe_parse(strip_magics("".join(cell.get("source", []))))
+        if tree is None:
+            continue
+        for node in tree.body:
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) \
+                    and node.name in PROTECTED:
+                continue
+            if is_stale_save(node):
+                continue
+            targets = [t.id for t in getattr(node, "targets", [])
+                       if isinstance(t, ast.Name)] if isinstance(node, ast.Assign) else []
+            try:
+                with contextlib.redirect_stdout(devnull):
+                    exec(compile(ast.Module(body=[node], type_ignores=[]),
+                                 str(nb_path), "exec"), ns)
+                failed.difference_update(targets)        # assignment succeeded
+            except Exception:
+                failed.update(targets)                   # assignment is stale
+                continue
+    cand = [(p, g) for p, g in captured.items()
+            if EIG_PATH_RE.search(p) and not ABGABE_RE.search(p)
+            and not STD_SAVE_RE.search(p)]
+    cand.sort(key=lambda pg: (0 if re.search(r'station[_\s-]*9|eigen', pg[0], re.I)
+                              else 1 if re.search(r'mein', pg[0], re.I) else 2))
+    for _p, g in cand:
+        img = _eigener_image(g)
+        if img is not None:
+            return img
+    if extra_expr:
+        try:
+            return _eigener_image(eval(compile(extra_expr, "<eig>", "eval"), ns))
+        except Exception:
+            return None
+    return None
+
+
+def render_eigener(folder: Path, chosen_nb: Path, ns_chosen: dict, base_grid):
+    """Eigener-filter image for one base image: fast expr-eval first, then
+    exec-capture across the folder's candidate notebooks."""
+    override = EIGENER_OVERRIDES.get(folder.name, {})
+    expr = override.get("expr") or find_eigener_expr(chosen_nb)
+    if expr:
+        if override.get("patch"):
+            # Repair an obvious typo in the student's own helper so their
+            # intended filter runs. Patch the SAME namespace the functions close
+            # over (their __globals__), not a copy, or the fix is invisible to
+            # them. Safe here: the standard filters are already rendered.
+            try:
+                exec(override["patch"], ns_chosen)
+            except Exception:
+                pass
+        img = eval_eigener(ns_chosen, expr, base_grid, folder)
+        if img is not None:
+            return img
+    extra = override.get("expr")
+    prefer = override.get("nb")
+    seq = [chosen_nb] + [n for n in candidate_notebooks(folder) if n != chosen_nb]
+    if prefer:                       # a notebook the student points to explicitly
+        seq.sort(key=lambda n: 0 if prefer.lower() in n.name.lower() else 1)
+    seen = []
+    for nb in seq:
+        if nb in seen:
+            continue
+        seen.append(nb)
+        img = exec_capture_eigener(nb, base_grid, folder, extra)
+        if img is not None:
+            return img
+    return None
+
+
+# ----------------------------------------------- server API (live uploads)
+# These let the Flask app reuse this engine to run each project's eigener
+# filter on a student-uploaded image, without ever serialising student code.
+def project_order():
+    """Submission folders in the committed Projekt-NN order (same seeded
+    shuffle as the build), with paired-teammate folders dropped."""
+    students = sorted([d for d in SUBM.iterdir() if d.is_dir()
+                       and d.name.lower() not in DROP_FOLDERS],
+                      key=lambda d: d.name.lower())
+    random.seed(SEED)
+    random.shuffle(students)
+    return students
+
+
+def load_projects():
+    """Build each project's filter namespace once (call at server start).
+    Returns [{'id','folder','nb','ns'}] in the deployed gallery order."""
+    out = []
+    for i, folder in enumerate(project_order(), 1):
+        chosen = choose_notebook(folder)
+        if chosen is None or chosen[3] == 0:
+            continue
+        nb, ns, _fns, _ = chosen
+        out.append({"id": f"projekt-{i:02d}", "folder": folder, "nb": nb, "ns": ns})
+    return out
+
+
+def project_eigener_image(project, base_grid):
+    """Run ONE project's eigener filter on an arbitrary base grid (an upload),
+    always treating the base as the subject (ignores the 'own_image' build
+    mode). Returns a PIL image or None."""
+    folder, nb, ns = project["folder"], project["nb"], project["ns"]
+    override = EIGENER_OVERRIDES.get(folder.name, {})
+    cache = ns.get("colors_done")
+    if isinstance(cache, dict):
+        cache.clear()                 # avoid unbounded growth across uploads
+    bw = override.get("base_width")
+    base = downscale_grid(base_grid, bw) if bw else base_grid
+    return render_eigener(folder, nb, ns, base)
 
 
 def _probe_grid():
@@ -320,15 +684,21 @@ def main() -> int:
     if GALLERY.exists():
         import shutil
         for child in GALLERY.iterdir():
-            if child.is_dir():
-                shutil.rmtree(child)
-            else:
-                child.unlink()
+            for attempt in range(5):       # OneDrive can briefly lock files
+                try:
+                    if child.is_dir():
+                        shutil.rmtree(child)
+                    else:
+                        child.unlink()
+                    break
+                except PermissionError:
+                    time.sleep(0.4)
 
     sources = build_sources()
     print(f"Test images: {', '.join(s['id'] + ' ' + 'x'.join(map(str, s['size'])) for s in sources)}")
 
-    students = sorted([d for d in SUBM.iterdir() if d.is_dir()],
+    students = sorted([d for d in SUBM.iterdir() if d.is_dir()
+                       and d.name.lower() not in DROP_FOLDERS],
                       key=lambda d: d.name.lower())
     order = students[:]
     random.seed(SEED)
@@ -337,7 +707,9 @@ def main() -> int:
     manifest = {
         "width": WIDTH,
         "sources": [{k: s[k] for k in ("id", "label", "file", "size")} for s in sources],
-        "filters": [{k: f[k] for k in ("id", "label", "station")} for f in FILTER_SPECS],
+        "filters": [{k: f[k] for k in ("id", "label", "station")}
+                    for f in FILTER_SPECS + [EIGENER]],
+        "credits": CREDITS,
         "projects": [],
     }
     mapping_rows = []
@@ -352,7 +724,8 @@ def main() -> int:
             where = chosen[0].name if chosen else "-"
             print(f"  {pid}: NO WORKING NOTEBOOK ({folder.name}, tried {where})")
             manifest["projects"].append(proj)
-            mapping_rows.append([pid, folder.name, "", 0])
+            mapping_rows.append([pid, " & ".join(TEAMS.get(folder.name, [folder.name])),
+                                 "", 0])
             continue
 
         nb, ns, fns, _ = chosen
@@ -369,15 +742,48 @@ def main() -> int:
                 img = run_filter(spec, fn, s["grid"])
                 if img is None:
                     continue
-                img.save(out_dir / f"{s['id']}__{spec['id']}.png")
+                save_img(img, out_dir / f"{s['id']}__{spec['id']}.{EXT}")
                 done.append(spec["id"])
                 ok_filters.add(spec["id"])
             proj["outputs"][s["id"]] = done
+
+        # ---- Station 9: eigener Filter — reproduce the student's invocation
+        override = EIGENER_OVERRIDES.get(folder.name, {})
+        if override.get("own_image"):
+            # collage filters (e.g. green-screen frame) only make sense on the
+            # student's own photo: render once, reuse across the source tabs.
+            own = folder / override["own_image"]
+            base = None
+            if own.exists():
+                try:
+                    base = to_grid(load_fit(own))
+                except Exception:
+                    base = None
+            img = render_eigener(folder, nb, ns, base) if base else None
+            if img is not None:
+                for s in sources:
+                    save_img(img, out_dir / f"{s['id']}__eigener.{EXT}")
+                    proj["outputs"][s["id"]].append("eigener")
+                ok_filters.add("eigener")
+                proj["eigener_own"] = True
+        else:
+            bw = override.get("base_width")
+            for s in sources:
+                base = downscale_grid(s["grid"], bw) if bw else s["grid"]
+                img = render_eigener(folder, nb, ns, base)
+                if img is not None:
+                    save_img(img, out_dir / f"{s['id']}__eigener.{EXT}")
+                    proj["outputs"][s["id"]].append("eigener")
+                    ok_filters.add("eigener")
+
         proj["n_filters"] = len(ok_filters)
         manifest["projects"].append(proj)
-        mapping_rows.append([pid, folder.name, nb.relative_to(folder).as_posix(),
+        team = " & ".join(TEAMS.get(folder.name, [folder.name]))
+        mapping_rows.append([pid, team, nb.relative_to(folder).as_posix(),
                              len(ok_filters)])
-        print(f"  {pid}: {len(ok_filters)}/8 filters  <- {folder.name}/{nb.name}")
+        eig = "JA " if "eigener" in ok_filters else "-- "
+        print(f"  {pid}: {len(ok_filters)}/8  eigener={eig} <- "
+              f"{folder.name}/{nb.name}")
 
     (GALLERY / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")

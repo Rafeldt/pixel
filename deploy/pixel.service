@@ -8,7 +8,8 @@ User=root
 WorkingDirectory=/opt/pixel/stempel-wanderung
 EnvironmentFile=/etc/pixel.env
 ExecStart=/opt/pixel/.venv/bin/gunicorn \
-  --workers 2 \
+  --workers 3 \
+  --timeout 180 \
   --bind 127.0.0.1:5001 \
   --access-logfile - \
   --error-logfile - \
