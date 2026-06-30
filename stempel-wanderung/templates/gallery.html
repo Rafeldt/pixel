@@ -49,7 +49,7 @@
 {# ===================================================== ALLE STATIONEN ===== #}
 {% if view == 'stationen' %}
   {% if sources %}
-  <div class="gallery-tabs" role="tablist" aria-label="Testbild auswaehlen">
+  <div class="gallery-tabs" role="tablist" aria-label="Testbild auswählen">
     {% for s in sources %}
       <a href="{{ url_for('gallery', ansicht='stationen', bild=s.id) }}"
          class="gallery-tab {{ 'active' if selected and s.id == selected.id }}">{{ s.label }}</a>

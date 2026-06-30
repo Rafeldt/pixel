@@ -58,22 +58,22 @@ DROP_FOLDERS = {"lasse"}           # teammate folders represented by another fol
 EIGENER_DESC = {
     "kira": "Benachbarte Pixel paarweise vertauscht",
     "nias": "Strudel-Verzerrung (Swirl)",
-    "jakob": "Invertiert, weichgezeichnet & Farbkanaele getauscht",
+    "jakob": "Invertiert, weichgezeichnet & Farbkanäle getauscht",
     "miron": "Invertiert und mit Sinuswellen verschoben",
-    "tore": "Halbtransparentes Wasserzeichen ueberlagert",
-    "vivienne": "Kaestchen-Mosaik mit abwechselnder Invertierung",
+    "tore": "Halbtransparentes Wasserzeichen überlagert",
+    "vivienne": "Kästchen-Mosaik mit abwechselnder Invertierung",
     "jelena": "Pink-violette Farbverschiebung",
     "konstantin": "Gespiegelt und mit Sinuswellen verzerrt",
     "jacqueline": "Aufgehellt und auf wenige Farben posterisiert",
-    "marta": "RGB-Glitch (Farbkanaele horizontal verschoben)",
-    "jascha": "Staerkste Farbe pro Pixel verstaerkt",
+    "marta": "RGB-Glitch (Farbkanäle horizontal verschoben)",
+    "jascha": "Stärkste Farbe pro Pixel verstärkt",
     "ella": "Sepiabild im Kamera-Rahmen (Greenscreen)",
     "giulia": "Weichgezeichnet mit Sepia-Ton",
-    "rose": "Vignette (Raender abgedunkelt)",
+    "rose": "Vignette (Ränder abgedunkelt)",
     "nicolas": "CRT-Monitor-Effekt (Subpixel-Raster)",
-    "loriana": "Verkleinert und grell pink-weiss eingefaerbt",
+    "loriana": "Verkleinert und grell pink-weiss eingefärbt",
     "fiona": "Zeilenweise nach Rotwert sortierte Pixel",
-    "sofia": "Gekippt und violett eingefaerbt",
+    "sofia": "Gekippt und violett eingefärbt",
     "mika": "Sinuswellen mit Spiegelung",
     "miya": "Kantenerkennung (Umrisse)",
     "michael": "Weichgezeichnet, auf 125 Farben reduziert & verrauscht (Fuzzy)",
@@ -170,7 +170,7 @@ SOURCE_SPECS = [
     ("bergsee", "Bergsee", ROOT / "test_images" / "landscape.jpg"),
     ("pfau", "Pfau", ROOT / "test_images" / "peacock.jpg"),
     ("schmetterling", "Schmetterling", ROOT / "test_images" / "butterfly.jpg"),
-    ("fruechte", "Fruechte", ROOT / "test_images" / "fruits.jpg"),
+    ("fruechte", "Früchte", ROOT / "test_images" / "fruits.jpg"),
 ]
 
 CREDITS = [
@@ -180,7 +180,7 @@ CREDITS = [
     "Bergsee (Moraine Lake): Gorgo, gemeinfrei (Wikimedia Commons)",
     "Pfau: BS Thurner Hof, CC BY-SA 3.0 (Wikimedia Commons)",
     "Schmetterling: Kenneth Dwain Harrelson, CC BY-SA 3.0 (Wikimedia Commons)",
-    "Fruechte: Ionutzmovie, CC BY 3.0 (Wikimedia Commons)",
+    "Früchte: Ionutzmovie, CC BY 3.0 (Wikimedia Commons)",
 ]
 
 

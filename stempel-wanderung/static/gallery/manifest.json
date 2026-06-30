@@ -57,7 +57,7 @@
     },
     {
       "id": "fruechte",
-      "label": "Fruechte",
+      "label": "Früchte",
       "file": "sources/fruechte.webp",
       "size": [
         480,
@@ -114,7 +114,7 @@
     "Bergsee (Moraine Lake): Gorgo, gemeinfrei (Wikimedia Commons)",
     "Pfau: BS Thurner Hof, CC BY-SA 3.0 (Wikimedia Commons)",
     "Schmetterling: Kenneth Dwain Harrelson, CC BY-SA 3.0 (Wikimedia Commons)",
-    "Fruechte: Ionutzmovie, CC BY 3.0 (Wikimedia Commons)"
+    "Früchte: Ionutzmovie, CC BY 3.0 (Wikimedia Commons)"
   ],
   "projects": [
     {
@@ -342,7 +342,7 @@
         ]
       },
       "n_filters": 8,
-      "desc": "Invertiert, weichgezeichnet & Farbkanaele getauscht"
+      "desc": "Invertiert, weichgezeichnet & Farbkanäle getauscht"
     },
     {
       "id": "projekt-04",
@@ -491,7 +491,7 @@
         ]
       },
       "n_filters": 7,
-      "desc": "Halbtransparentes Wasserzeichen ueberlagert"
+      "desc": "Halbtransparentes Wasserzeichen überlagert"
     },
     {
       "id": "projekt-06",
@@ -555,7 +555,7 @@
         ]
       },
       "n_filters": 6,
-      "desc": "Kaestchen-Mosaik mit abwechselnder Invertierung"
+      "desc": "Kästchen-Mosaik mit abwechselnder Invertierung"
     },
     {
       "id": "projekt-07",
@@ -865,7 +865,7 @@
         ]
       },
       "n_filters": 8,
-      "desc": "RGB-Glitch (Farbkanaele horizontal verschoben)"
+      "desc": "RGB-Glitch (Farbkanäle horizontal verschoben)"
     },
     {
       "id": "projekt-11",
@@ -936,7 +936,7 @@
         ]
       },
       "n_filters": 7,
-      "desc": "Staerkste Farbe pro Pixel verstaerkt"
+      "desc": "Stärkste Farbe pro Pixel verstärkt"
     },
     {
       "id": "projekt-12",
@@ -1170,7 +1170,7 @@
         ]
       },
       "n_filters": 8,
-      "desc": "Vignette (Raender abgedunkelt)"
+      "desc": "Vignette (Ränder abgedunkelt)"
     },
     {
       "id": "projekt-15",
@@ -1326,7 +1326,7 @@
         ]
       },
       "n_filters": 8,
-      "desc": "Verkleinert und grell pink-weiss eingefaerbt"
+      "desc": "Verkleinert und grell pink-weiss eingefärbt"
     },
     {
       "id": "projekt-17",
@@ -1482,7 +1482,7 @@
         ]
       },
       "n_filters": 8,
-      "desc": "Gekippt und violett eingefaerbt"
+      "desc": "Gekippt und violett eingefärbt"
     },
     {
       "id": "projekt-19",
